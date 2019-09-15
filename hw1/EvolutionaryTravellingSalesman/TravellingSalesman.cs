@@ -38,6 +38,10 @@ public class TravellingSalesman
         }
     }
 
+    public override string ToString(){
+        return ""+Cost;
+    }
+
     public class City
     {
         private float m_x = 0;
@@ -53,6 +57,10 @@ public class TravellingSalesman
             float dx = city1.m_x - city2.m_x;
             float dy = city1.m_y - city2.m_y;
             return MathF.Sqrt(dx * dx + dy * dy);
+        }
+
+        public override string ToString(){
+            return m_x + " " + m_y;
         }
     }
 }

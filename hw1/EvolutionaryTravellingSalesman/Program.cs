@@ -27,12 +27,12 @@ namespace EvolutionaryTravellingSalesman
                 population.AddLast(new TravellingSalesman(cities));
             }
             // Start evolution
-            int generationCount = 10000 ;
+            int generationCount = 1000000;
             bool findShortestPath = true;
             float elitistPercentage = 0.01f;
             var selector = new SimulatedAnnealingSelected();
-            float mutationFactor = 0.8f;
-            float mutationFactorDecay = 0.999f;
+            float mutationFactor = 0.99f;
+            float mutationFactorDecay = 0.99999f;
 
             // Timer for optimization purposes
             selector.Reset();

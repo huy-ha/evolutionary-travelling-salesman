@@ -7,13 +7,11 @@ public class SimulatedAnnealingSelected
     private float m_beta; 
     private float m_initT;
     private float m_T;
-    private float m_elitistPercentage;
     private float m_reproductionPercentage; 
-    public SimulatedAnnealingSelected(float beta = 0.001f,float initT=100,float elitistPercentage = 0.01f, float reproductionPercentage = 0.6f){
+    public SimulatedAnnealingSelected(float beta = 0.001f,float initT=100, float reproductionPercentage = 0.4f){
         m_beta = beta;
         m_initT = initT;
         m_T = m_initT;
-        m_elitistPercentage = elitistPercentage;
         m_reproductionPercentage = reproductionPercentage;
     }
 
@@ -22,34 +20,45 @@ public class SimulatedAnnealingSelected
     }
 
     //Stochastic Universal Sampling based on pseudocode from https://en.wikipedia.org/wiki/Stochastic_universal_sampling
-    public IEnumerable<TravellingSalesman> Select(IEnumerable<TravellingSalesman> salesmen,bool ascending = true){
-        // Calculate variables for SUS
-        var populationCostSum = salesmen.Sum(salesman => salesman.Cost);
-        var count = salesmen.Count();
-        int elitistCount = (int) (count * m_elitistPercentage);
-        int reproductionCount = (int) (count * m_reproductionPercentage);
-        float distBetweenPtr = populationCostSum/reproductionCount;
-        var rand = new Random();
-        float start = rand.Next() % distBetweenPtr;
+    public 
+    // (IEnumerable<TravellingSalesman>,IEnumerable<TravellingSalesman>)
+    IEnumerable<TravellingSalesman>
+     Select(IEnumerable<TravellingSalesman> salesmen, float elitistPercentage = 0.1f,bool findShortestPath=true){
+        if(findShortestPath){
+            return salesmen.OrderByDescending(salesman => salesman.Fitness).Take((int) (salesmen.Count() * m_reproductionPercentage));
+        }else {
+            return salesmen.OrderBy(salesman => salesman.Fitness).Take((int) (salesmen.Count() * m_reproductionPercentage));
+        }
+        
+        // // Calculate Population Variables
+        // var fitnessSum = salesmen.Sum(salesman => salesman.Fitness);
+        // var count = salesmen.Count();
+        // int eliteCount = (int) (count * elitistPercentage);
+        // int reproductionCount = count - eliteCount;
 
-        // Sort Enumerable in ascending order
-        salesmen.OrderBy(salesman => salesman.Cost);
-        if(!ascending) salesmen.Reverse();
+        // // Calculate variables for SUS
+        // float distBetweenPtr = fitnessSum/reproductionCount;
+        // var rand = new Random();
+        // float start = rand.Next() % distBetweenPtr;
         
-        LinkedList<float> ptrs = new LinkedList<float>();
-        for(int i = 0; i < reproductionCount; i++) ptrs.AddLast(start + distBetweenPtr * i);
-        
-        var currPtr = ptrs.First;
-        float sum = 0;
-        // Return salesmen chosen to reproduce for next generation
-        return salesmen.Where(salesman => {
-            sum += salesman.Cost;
-            bool toSelect = sum > currPtr.Value;
-            if(toSelect){
-                currPtr = currPtr.Next;
-                return true;
-            }
-            return false;
-        });
+        // salesmen.OrderBy(salesman => salesman.Fitness);
+        // if(!ascending) salesmen.Reverse();
+
+        // LinkedList<TravellingSalesman> parents = new LinkedList<TravellingSalesman>();
+        // for(int i = 0; i < reproductionCount; i++) {
+        //     float selectionFitness = start + distBetweenPtr * i;
+        //     float currentFitnessSum = 0;
+        //     foreach(var salesman in salesmen){
+        //         currentFitnessSum += salesman.Fitness;
+        //         if(currentFitnessSum > selectionFitness){
+        //             parents.AddLast(salesman);
+        //             break;
+        //         }
+        //     }
+        // }
+        // return ( 
+        //     ascending ? salesmen.TakeLast(eliteCount) : salesmen.Take(eliteCount),
+        //     parents
+        // );
     }
 }

@@ -4,19 +4,43 @@ using System.Linq;
 
 public class TravellingSalesman
 {
+    #region Variables
     public float Cost
     {
         get;
         protected set;
     }
 
+    public float Fitness {
+        get {
+            return 1000/Cost;
+        }
+    }
+
     private List<City> m_path;
+    #endregion
 
 	public TravellingSalesman(IEnumerable<City> cities)
 	{
         m_path = FindRandomPath(cities);
         CalculateCost();
 	}
+
+    public TravellingSalesman(TravellingSalesman parent,float mutationFactor=0.1f){
+        m_path = new List<City>(parent.m_path);
+        int count = m_path.Count(); 
+        int swaps = (int) (count*mutationFactor);
+        var rand = new Random();
+        for(int i = 0; i < swaps;i++){
+            int idx1 = rand.Next()%count;
+            int idx2 = rand.Next()%count;
+            //swap two cities
+            var tmp = m_path[idx1];
+            m_path[idx1] = m_path[idx2];
+            m_path[idx2] = tmp;
+        }
+        CalculateCost();
+    }
 
     private List<City> FindRandomPath(IEnumerable<City> cities)
     {
@@ -39,7 +63,7 @@ public class TravellingSalesman
     }
 
     public override string ToString(){
-        return ""+Cost;
+        return ""+Fitness;
     }
 
     public class City

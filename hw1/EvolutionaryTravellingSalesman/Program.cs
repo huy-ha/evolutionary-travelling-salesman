@@ -20,17 +20,21 @@ namespace EvolutionaryTravellingSalesman
                 });
 
             // Initialize population
-            int populationCount = 10000;
+            int populationCount = 1000;
             var population = new LinkedList<TravellingSalesman>();
             for(int i = 0; i < populationCount; i++)
             {
                 population.AddLast(new TravellingSalesman(cities));
             }
             // Start evolution
-            int generationCount = 100;
+            int generationCount = 10000 ;
             bool findShortestPath = true;
             float elitistPercentage = 0.01f;
             var selector = new SimulatedAnnealingSelected();
+            float mutationFactor = 0.8f;
+            float mutationFactorDecay = 0.999f;
+
+            // Timer for optimization purposes
             selector.Reset();
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
@@ -39,8 +43,12 @@ namespace EvolutionaryTravellingSalesman
                 //select
                 // (var elites,var parents) = selector.Select(population,elitistPercentage,findShortestPath);
                 var parents = selector.Select(population,elitistPercentage,findShortestPath);
+                float parentsAvgDist = parents.Average(salesman => salesman.Cost);
+                float parentsMaxDist = parents.Max(salesman => salesman.Cost);
+                float parentsMinDist = parents.Min(salesman => salesman.Cost);
+                 Console.WriteLine("Average: " + parentsAvgDist + ", Max: " + parentsMaxDist + ", Min: "+ parentsMinDist);
                 //mutate
-                var offspring = parents.Select(parent => new TravellingSalesman(parent));
+                var offspring = parents.Select(parent => new TravellingSalesman(parent,mutationFactor));
                 while(offspring.Count() < populationCount){
                     offspring = offspring.Concat(                             // 4. Concatenate newly created children with previous children
                         await Task.WhenAll(                                   // 3. Wait until all constructions of children is finished
@@ -49,14 +57,16 @@ namespace EvolutionaryTravellingSalesman
                                 new TravellingSalesman(parent))).ToArray())); // 1. From each parent, create a new TravellingSalesman
                 }
                 population = new LinkedList<TravellingSalesman>(offspring.Take(populationCount));
-                // population = new LinkedList<TravellingSalesman>(elites.Concat(offspring));
+                mutationFactor *= mutationFactorDecay;
 
                 //get longest, shortest, and average
                 float avgDist = population.Average(salesman => salesman.Cost);
                 float maxDist = population.Max(salesman => salesman.Cost);
                 float minDist = population.Min(salesman => salesman.Cost);
                 Console.WriteLine("Average: " + avgDist + ", Max: " + maxDist + ", Min: "+ minDist);
-                Console.WriteLine("Population:" + population.Count);
+                Console.WriteLine("Population:" + population.Count + ", MutationFactor:" + mutationFactor);
+                if(mutationFactor == 0) break;
+                
             }
             stopWatch.Stop();
             TimeSpan ts = stopWatch.Elapsed;

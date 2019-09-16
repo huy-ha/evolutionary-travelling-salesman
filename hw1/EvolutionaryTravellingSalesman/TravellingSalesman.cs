@@ -26,11 +26,12 @@ public class TravellingSalesman
         CalculateCost();
 	}
 
-    public TravellingSalesman(TravellingSalesman parent,float mutationFactor=0.1f){
+    public TravellingSalesman(TravellingSalesman parent,float maxMutationFactor=0.3f){
         m_path = new List<City>(parent.m_path);
         int count = m_path.Count(); 
-        int swaps = (int) (count*mutationFactor);
+        int maxSwaps = Math.Max((int) (count*maxMutationFactor),1);        
         var rand = new Random();
+        int swaps = rand.Next() % maxSwaps;
         for(int i = 0; i < swaps;i++){
             int idx1 = rand.Next()%count;
             int idx2 = rand.Next()%count;

@@ -67,6 +67,10 @@ public class TravellingSalesman
         return ""+Fitness;
     }
 
+    public string PrintPath(){
+        return string.Join("|",m_path);
+    }
+
     public class City
     {
         private float m_x = 0;

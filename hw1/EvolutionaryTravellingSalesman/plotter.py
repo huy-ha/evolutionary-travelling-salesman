@@ -1,12 +1,14 @@
 import matplotlib.pyplot as plt
-
+import re 
 def read_file(filename):
     return [float(x) for x in open(filename,"r").readlines()]
 
 def read_path(filename,generation):
     file = open(filename,"r")
-    while file.readline() is not "Generation {}".format(generation):
-        file.readline() # Path
+    while True:
+        curr = int(re.findall('\d+', file.readline())[0])
+        if curr >= generation:
+            break
     cities = [city.split(' ') for city in file.readline().split('|')]
     x = []
     y = []
@@ -37,5 +39,5 @@ def plot_path(generation=0):
 
 
 if __name__ == "__main__":
-    # plot_costs();
-    plot_path(generation=98000)
+    plot_costs();
+    # plot_path(generation=98000)

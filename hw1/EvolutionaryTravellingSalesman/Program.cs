@@ -25,7 +25,7 @@ namespace EvolutionaryTravellingSalesman
                 });
 
             // Initialize population
-            int populationCount = 500;
+            int populationCount = 300;
             var population = new LinkedList<TravellingSalesman>();
             for(int i = 0; i < populationCount; i++)
             {
@@ -34,18 +34,25 @@ namespace EvolutionaryTravellingSalesman
             // Start evolution
             int generationCount = 100000;
             bool findShortestPath = true;
-            float elitistPercentage = 0.01f;
+            float elitistPercentage = 0.02f;
             var selector = new SimulatedAnnealingSelected();
-            float mutationFactor = 0.6f;
-            float mutationFactorDecay = 0.9999f;
+            float initMutationFactor = 0.5f;
+            float mutationFactor = initMutationFactor;
+            float mutationFactorDecay = 1f;
+
+            // Simulated Annealing
+            float init_T = 1f;
+            float T = init_T; //Probability of choosing a worse gene anyways
+            float T_decay = 0.9999f;
 
             int saveInterval = generationCount/50;
 
             // Timer for optimization purposes
+            #if DEBUG
             selector.Reset();
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
-
+            #endif
             // Output variables
             string bestSalesmanOutput = "";
             List<float> minCosts = new List<float>(generationCount);
@@ -71,10 +78,13 @@ namespace EvolutionaryTravellingSalesman
                         await Task.WhenAll(                                   // 3. Wait until all constructions of children is finished
                             parents.Select(                                                       
                                 parent => Task.Run(() =>                      // 2. Run the constructor asynchronously 
-                                new TravellingSalesman(parent))).ToArray())); // 1. From each parent, create a new TravellingSalesman
+                                new TravellingSalesman(parent,T,mutationFactor))).ToArray())); // 1. From each parent, create a new TravellingSalesman
                 }
-                population = new LinkedList<TravellingSalesman>(offspring.Take(populationCount));
+                var elites = population.OrderBy(salesman => salesman.Cost).Take((int)elitistPercentage*populationCount);
+                
+                population = new LinkedList<TravellingSalesman>(elites.Concat(offspring).OrderBy(salesman => salesman.Cost).Take(populationCount));
                 mutationFactor *= mutationFactorDecay;
+                T *= T_decay;
 
                 // Collect Stats
                 float avgDist = population.Average(salesman => salesman.Cost);
@@ -87,7 +97,10 @@ namespace EvolutionaryTravellingSalesman
                 avgCosts.Add(avgDist);
                 #if DEBUG
                     Console.WriteLine("Average: " + avgDist + ", Max: " + maxDist + ", Min: "+ minDist);
-                    Console.WriteLine("Population:" + population.Count + ", MutationFactor:" + mutationFactor);
+                    Console.WriteLine(
+                        "Population:" + population.Count + 
+                        ", MutationFactor:" + mutationFactor +
+                        ", T:" + T);
                 #endif
                 if(mutationFactor == 0) break;
                 if(generation%saveInterval == 0){
@@ -96,14 +109,30 @@ namespace EvolutionaryTravellingSalesman
                     bestSalesmanOutput += minSalesman.PrintPath() + "\n";
                 }
             }
+            #if DEBUG
             stopWatch.Stop();
             TimeSpan ts = stopWatch.Elapsed;
             Console.WriteLine(ts.TotalSeconds);
+            #endif
             // Save Output
             System.IO.File.WriteAllText("BestSalesMan.txt", bestSalesmanOutput);
             System.IO.File.WriteAllText("MaxCosts.txt", string.Join("\n",maxCosts));
             System.IO.File.WriteAllText("MinCosts.txt", string.Join("\n",minCosts));
             System.IO.File.WriteAllText("AvgCosts.txt", string.Join("\n",avgCosts));
+            string config = "";
+            config += "Cities File: " + filePath + "\n";
+            config += "FindShortestPath: " + findShortestPath + "\n";
+            config += "Generation Count: " + generationCount + "\n";
+            config += "\n";
+            config += "Population Count: " + populationCount + "\n";
+            config += "Elitist Percentage: " + elitistPercentage + "\n";
+            config += "\n";
+            config += "Initial Mutation Factor: " + initMutationFactor + "\n";
+            config += "Mutation Factor Decay: " + mutationFactorDecay + "\n";
+            config += "\n";
+            config += "Init T: " + init_T + "\n";
+            config += "T Decay: " + T_decay + "\n";
+            System.IO.File.WriteAllText("Config.txt", config);
         }
     }
 }

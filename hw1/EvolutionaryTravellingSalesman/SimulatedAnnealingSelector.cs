@@ -4,32 +4,38 @@ using System;
 
 public class SimulatedAnnealingSelected
 {
-    private float m_beta; 
+    private float m_beta;
     private float m_initT;
     private float m_T;
-    private float m_reproductionPercentage; 
-    public SimulatedAnnealingSelected(float beta = 0.001f,float initT=100, float reproductionPercentage = 0.4f){
+    private float m_reproductionPercentage;
+    public SimulatedAnnealingSelected(float beta = 0.001f, float initT = 100, float reproductionPercentage = 0.4f)
+    {
         m_beta = beta;
         m_initT = initT;
         m_T = m_initT;
         m_reproductionPercentage = reproductionPercentage;
     }
 
-    public void Reset(){
+    public void Reset()
+    {
         m_T = m_initT;
     }
 
     //Stochastic Universal Sampling based on pseudocode from https://en.wikipedia.org/wiki/Stochastic_universal_sampling
-    public 
+    public
     // (IEnumerable<TravellingSalesman>,IEnumerable<TravellingSalesman>)
     IEnumerable<TravellingSalesman>
-     Select(IEnumerable<TravellingSalesman> salesmen, float elitistPercentage = 0.1f,bool findShortestPath=true){
-        if(findShortestPath){
-            return salesmen.OrderByDescending(salesman => salesman.Fitness).Take((int) (salesmen.Count() * m_reproductionPercentage));
-        }else {
-            return salesmen.OrderBy(salesman => salesman.Fitness).Take((int) (salesmen.Count() * m_reproductionPercentage));
+     Select(IEnumerable<TravellingSalesman> salesmen, float elitistPercentage = 0.1f, bool findShortestPath = true)
+    {
+        if (findShortestPath)
+        {
+            return salesmen.OrderBy(salesman => salesman.Cost).Take((int)(salesmen.Count() * m_reproductionPercentage));
         }
-        
+        else
+        {
+            return salesmen.OrderByDescending(salesman => salesman.Cost).Take((int)(salesmen.Count() * m_reproductionPercentage));
+        }
+
         // // Calculate Population Variables
         // var fitnessSum = salesmen.Sum(salesman => salesman.Fitness);
         // var count = salesmen.Count();
@@ -40,7 +46,7 @@ public class SimulatedAnnealingSelected
         // float distBetweenPtr = fitnessSum/reproductionCount;
         // var rand = new Random();
         // float start = rand.Next() % distBetweenPtr;
-        
+
         // salesmen.OrderBy(salesman => salesman.Fitness);
         // if(!ascending) salesmen.Reverse();
 

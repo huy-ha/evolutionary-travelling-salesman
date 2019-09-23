@@ -30,7 +30,7 @@ public class TravellingSalesman
         m_rand = new Random();
     }
 
-    public TravellingSalesman(TravellingSalesman parent, float T, float maxMutationFactor = 0.3f)
+    public TravellingSalesman(TravellingSalesman parent, float T, bool findShortestPath, float maxMutationFactor = 0.3f)
     {
         m_path = new List<City>(parent.m_path);
         m_rand = new Random();
@@ -40,22 +40,21 @@ public class TravellingSalesman
         int mutations = m_rand.Next() % maxMutations;
         for (int i = 0; i < mutations; i++)
         {
-            Mutate(T, count);
+            Mutate(T, count, findShortestPath);
         }
         CalculateCost();
     }
 
-    private void Mutate(float T, int count)
+    private void Mutate(float T, int count, bool findShortestPath)
     {
         var testPath = new List<City>(m_path);
         Swap(testPath, m_rand.Next() % count, m_rand.Next() % count);
         float testPathCost = CalculateCost(testPath);
-        if (testPathCost < Cost || m_rand.NextDouble() < T)
+        if ((findShortestPath ? testPathCost < Cost : testPathCost > Cost) || m_rand.NextDouble() < T)
         {
             m_path = testPath;
             Cost = testPathCost;
         }
-
     }
 
     private void Swap(List<City> path, int i1, int i2)

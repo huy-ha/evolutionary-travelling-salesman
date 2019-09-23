@@ -26,14 +26,14 @@ namespace EvolutionaryTravellingSalesman
                 });
 
             // Initialize population
-            int populationCount = 600;
+            int populationCount = 100;
             var population = new LinkedList<TravellingSalesman>();
             for (int i = 0; i < populationCount; i++)
             {
                 population.AddLast(new TravellingSalesman(cities));
             }
             // Start evolution
-            int generationCount = 100;
+            int generationCount = 50000;
             bool findShortestPath = true;
             float elitistPercentage = 0.02f;
             var selector = new SimulatedAnnealingSelected();
@@ -56,6 +56,7 @@ namespace EvolutionaryTravellingSalesman
 
             // Output variables
             string bestSalesmanOutput = "";
+            string worstSalesmanOutput = "";
             List<float> minCosts = new List<float>(generationCount);
             List<float> maxCosts = new List<float>(generationCount);
             List<float> avgCosts = new List<float>(generationCount);
@@ -73,18 +74,28 @@ namespace EvolutionaryTravellingSalesman
                 Console.WriteLine("Average Parent: " + parentsAvgDist + ", Max: " + parentsMaxDist + ", Min: " + parentsMinDist);
 #endif
                 //mutate
-                var offspring = parents.Select(parent => new TravellingSalesman(parent, mutationFactor));
+                IEnumerable<TravellingSalesman> offspring = await Task.WhenAll(
+                    parents.Select(parent => Task.Run(() =>
+                     new TravellingSalesman(parent, T, findShortestPath))));
                 while (offspring.Count() < populationCount)
                 {
                     offspring = offspring.Concat(                             // 4. Concatenate newly created children with previous children
                         await Task.WhenAll(                                   // 3. Wait until all constructions of children is finished
                             parents.Select(
                                 parent => Task.Run(() =>                      // 2. Run the constructor asynchronously 
-                                new TravellingSalesman(parent, T))).ToArray())); // 1. From each parent, create a new TravellingSalesman
+                                new TravellingSalesman(parent, T, findShortestPath))).ToArray())); // 1. From each parent, create a new TravellingSalesman
                 }
-                var elites = population.OrderBy(salesman => salesman.Cost).Take((int)(elitistPercentage * populationCount));
-                population = new LinkedList<TravellingSalesman>(offspring.Take(populationCount));
-                population = new LinkedList<TravellingSalesman>(elites.Concat(offspring).OrderBy(salesman => salesman.Cost).Take(populationCount));
+                if (findShortestPath)
+                {
+                    //elites
+                    offspring = population.OrderBy(salesman => salesman.Cost).Take((int)(elitistPercentage * populationCount)).Concat(offspring);
+                    population = new LinkedList<TravellingSalesman>(offspring.OrderBy(salesman => salesman.Cost).Take(populationCount));
+                }
+                else
+                {
+                    offspring = population.OrderByDescending(salesman => salesman.Cost).Take((int)(elitistPercentage * populationCount)).Concat(offspring);
+                    population = new LinkedList<TravellingSalesman>(offspring.OrderByDescending(salesman => salesman.Cost).Take(populationCount));
+                }
                 T *= T_decay;
                 mutationFactor *= mutationFactorDecay;
 
@@ -108,6 +119,8 @@ namespace EvolutionaryTravellingSalesman
                     Console.WriteLine("Saving Generation " + generation);
                     bestSalesmanOutput += "Generation " + generation + "\n";
                     bestSalesmanOutput += minSalesman.PrintPath() + "\n";
+                    worstSalesmanOutput += "Generation " + generation + "\n";
+                    worstSalesmanOutput += minSalesman.PrintPath() + "\n";
                 }
             }
             stopWatch.Stop();
@@ -127,11 +140,12 @@ namespace EvolutionaryTravellingSalesman
             config += "\n";
             config += "Init T: " + init_T + "\n";
             config += "T Decay: " + T_decay + "\n";
-            System.IO.File.WriteAllText("Config.txt", config);
-            System.IO.File.WriteAllText("BestSalesMan.txt", bestSalesmanOutput);
-            System.IO.File.WriteAllText("MaxCosts.txt", string.Join("\n", maxCosts));
-            System.IO.File.WriteAllText("MinCosts.txt", string.Join("\n", minCosts));
-            System.IO.File.WriteAllText("AvgCosts.txt", string.Join("\n", avgCosts));
+            System.IO.File.WriteAllText("output/Config.txt", config);
+            System.IO.File.WriteAllText("output/BestSalesMan.txt", bestSalesmanOutput);
+            System.IO.File.WriteAllText("output/WorstSalesMan.txt", bestSalesmanOutput);
+            System.IO.File.WriteAllText("output/MaxCosts.txt", string.Join("\n", maxCosts));
+            System.IO.File.WriteAllText("output/MinCosts.txt", string.Join("\n", minCosts));
+            System.IO.File.WriteAllText("output/AvgCosts.txt", string.Join("\n", avgCosts));
         }
     }
 }

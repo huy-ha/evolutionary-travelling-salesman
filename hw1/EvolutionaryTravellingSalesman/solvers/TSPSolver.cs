@@ -6,15 +6,24 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 namespace EvolutionaryTravellingSalesman
 {
-    // TODO do circle cities test file
-    // TODO implement Dijkstra's to know limit
-    // TODO implement random search to know baseline
-    // Plot path
-    // Try to minimize evaluations
     class TSPSolver
     {
         #region Variable Declarations
-        public const string SolverName = "TSPSolver";
+
+        private static string m_solverName = "DEFAULT";
+        public static string SolverName
+        {
+            get
+            {
+                if (m_solverName == "DEFAULT")
+                    throw new NotImplementedException();
+                return m_solverName;
+            }
+            protected set
+            {
+                m_solverName = value;
+            }
+        }
         protected delegate void OnConfigureHandler(Config config);
         protected event OnConfigureHandler OnConfigure;
         private Config m_config;
@@ -38,10 +47,14 @@ namespace EvolutionaryTravellingSalesman
 
         #region Configuration 
         protected bool findShortestPath;
+        protected int generationCount;
+
+        protected int populationCount;
         #endregion
         public TSPSolver()
         {
-            int generationCount = config.Get(Config.Int.GenerationCount);
+            generationCount = config.Get(Config.Int.GenerationCount);
+            populationCount = config.Get(Config.Int.PopulationCount);
             m_data.Add(Data.AverageCost, new List<float>(generationCount));
             m_data.Add(Data.MaxCost, new List<float>(generationCount));
             m_data.Add(Data.MinCost, new List<float>(generationCount));
@@ -49,7 +62,7 @@ namespace EvolutionaryTravellingSalesman
             m_outputStrings.Add(Data.WorstSalesMan, "");
         }
 
-        public Solver Configure(Config initConfig)
+        public TSPSolver Configure(Config initConfig)
         {
             config = initConfig;
             findShortestPath = config.Get(Config.Bool.Optimize);
@@ -58,6 +71,8 @@ namespace EvolutionaryTravellingSalesman
 
         protected void Reset()
         {
+            // Make sure that solver name is set corrected
+            string solverName = SolverName;
             cities = File.ReadAllLines(config.Get(Config.String.InputFilePath))
                                         .Select(line =>
                                         {
@@ -70,12 +85,12 @@ namespace EvolutionaryTravellingSalesman
             population = new LinkedList<TravellingSalesman>();
             for (int i = 0; i < config.Get(Config.Int.PopulationCount); i++)
             {
-                population.AddLast(new TravellingSalesman(cities));
+                population.AddLast(new TravellingSalesman(findShortestPath, cities));
             }
         }
 
         // Evolves the population of TSP for the specified number of generations
-        public virtual void Run()
+        public virtual async Task Run()
         {
             Reset();
 
@@ -89,7 +104,7 @@ namespace EvolutionaryTravellingSalesman
 #if DEBUG
                 Console.WriteLine("\nGeneration " + currentGeneration);
 #endif
-                Evolve();
+                await Evolve();
                 generationStopWatch.Stop();
                 RecordStats();
                 // TODO calculate time left
@@ -105,7 +120,7 @@ namespace EvolutionaryTravellingSalesman
             SaveStats();
         }
 
-        public virtual void Evolve()
+        public virtual async Task Evolve()
         {
             throw new NotImplementedException();
         }

@@ -24,15 +24,20 @@ namespace EvolutionaryTravellingSalesman
         static void Main(string[] args)
         {
             var config = new Config("config.txt");
-            TSPSolver solver;
-            switch (config.Get(Config.String.Solver))
-            {
-                default:
-                    solver = new TSPSolver();
-                    break;
-            }
-            solver.Configure(config);
-            solver.Run();
+            Console.WriteLine(config);
+            // TSPSolver solver;
+            // switch (config.Get(Config.String.Solver))
+            // {
+            //     case "MultipleInheritancePriorityTSPSolver":
+            //         solver = new MultipleInheritancePriorityTSPSolver();
+            //         break;
+            //     case "TSPSolver":
+            //     default:
+            //         solver = new TSPSolver();
+            //         break;
+            // }
+            // solver.Configure(config);
+            // solver.Run();
         }
     }
 }

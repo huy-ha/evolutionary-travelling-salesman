@@ -9,6 +9,14 @@ namespace EvolutionaryTravellingSalesman
     // TODO do circle cities test file
     // TODO implement Dijkstra's to know limit
     // TODO implement random search to know baseline
+    // TODO implement find shortest path by changing fitness calculation of TSP
+    // TODO config file
+    // TODO approximate time left
+    // TODO stopping condition when no improvement in half the time
+    // TODO Hierarchical tree based on spatial
+    // TODO How to do tight linkage??
+    // TODO How to do diversity????
+    // TODO change to how many evaluations rather than generations
     // Plot path
     // Try to minimize evaluations
     class Program
@@ -65,7 +73,7 @@ namespace EvolutionaryTravellingSalesman
 #if DEBUG
                 Console.WriteLine("\nGeneration " + generation);
 #endif
-                //select
+                // Select individuals that will be reproducing
                 var parents = selector.Select(population, elitistPercentage, findShortestPath);
 #if DEBUG
                 float parentsAvgDist = parents.Average(salesman => salesman.Cost);
@@ -73,7 +81,7 @@ namespace EvolutionaryTravellingSalesman
                 float parentsMinDist = parents.Min(salesman => salesman.Cost);
                 Console.WriteLine("Average Parent: " + parentsAvgDist + ", Max: " + parentsMaxDist + ", Min: " + parentsMinDist);
 #endif
-                //mutate
+                // Create offsprings
                 IEnumerable<TravellingSalesman> offspring = await Task.WhenAll(
                     parents.Select(parent => Task.Run(() =>
                      new TravellingSalesman(parent, T, findShortestPath))));

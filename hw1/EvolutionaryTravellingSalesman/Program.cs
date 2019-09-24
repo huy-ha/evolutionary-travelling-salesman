@@ -23,7 +23,10 @@ namespace EvolutionaryTravellingSalesman
     {
         static void Main(string[] args)
         {
-            var config = new Config("config.txt");
+            string configFilePath = "config.txt";
+            if (args.Length > 0)
+                configFilePath = args[0];
+            var config = new Config(configFilePath);
             Console.WriteLine(config);
             // TSPSolver solver;
             // switch (config.Get(Config.String.Solver))

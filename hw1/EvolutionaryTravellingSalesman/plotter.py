@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import re
-
+# TODO plot error bars
+# TODO plot log of data
 
 def read_file(filename):
     return [float(x) for x in open(filename, "r").readlines()]

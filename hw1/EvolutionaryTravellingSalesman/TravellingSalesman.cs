@@ -66,10 +66,9 @@ public class TravellingSalesman
 
     private List<City> FindRandomPath(IEnumerable<City> cities)
     {
-        var rand = new Random();
         return new List<City>(cities
             .Zip(
-            cities.Select(city => rand.NextDouble()), //create random order
+            cities.Select(city => m_rand.NextDouble()), //create random order
             (city, order) => new { City = city, Order = order }) //create object with order and city
             .OrderBy(obj => obj.Order) //sort by order
             .Select(obj => obj.City)); //get just the city

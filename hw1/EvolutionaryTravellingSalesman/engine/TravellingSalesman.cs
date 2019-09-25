@@ -34,13 +34,14 @@ namespace EvolutionaryTravellingSalesman
             CalculateCost();
         }
 
-        public TravellingSalesman(IEnumerable<Tuple<City, float>> initPriorities, float initFitness = -1)
+        public TravellingSalesman(IEnumerable<Tuple<City, float>> initPriorities)
         {
             if (config == null)
                 throw new System.Exception("Travelling Salesman not configured");
             priorities = new LinkedList<Tuple<City, float>>(NormalizePriorities(initPriorities));
             m_rand = new Random();
-            UpdatePriorities(priorities, initFitness);
+            UpdatePriorities(priorities);
+
         }
 
         public IEnumerable<Tuple<City, float>> NormalizePriorities(IEnumerable<Tuple<City, float>> unnormalizedPriorities)
@@ -50,16 +51,13 @@ namespace EvolutionaryTravellingSalesman
             return unnormalizedPriorities.Select(pair => new Tuple<City, float>(pair.Item1, 1 - (pair.Item2 % cityWithPriority.Item2)));
         }
 
-        public void UpdatePriorities(LinkedList<Tuple<City, float>> priorities, float initFitness = -1)
+        public void UpdatePriorities(LinkedList<Tuple<City, float>> priorities)
         {
             this.priorities = priorities;
-            if (m_path == null)
-                m_path = ToPath(priorities);
-            if (initFitness == -1)
-                CalculateCost();
-            else
-                Cost = FitnessToCost(Cost);
+            m_path = ToPath(priorities);
+            CalculateCost();
         }
+
 
         public float Fitness()
         {

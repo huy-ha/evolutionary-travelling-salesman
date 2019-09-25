@@ -9,7 +9,8 @@ namespace EvolutionaryTravellingSalesman
     class TSPSolver
     {
         #region Variable Declarations
-
+        protected delegate void OnLogHandler();
+        protected event OnLogHandler OnLog;
         private static string m_solverName = "DEFAULT";
         public static string SolverName
         {
@@ -24,6 +25,8 @@ namespace EvolutionaryTravellingSalesman
                 m_solverName = value;
             }
         }
+
+
         protected Config config;
         // Keeps track of how long last N generations took
 #if ETA
@@ -99,9 +102,8 @@ namespace EvolutionaryTravellingSalesman
                 generationStopWatch.Reset();
                 generationStopWatch.Start();
 #endif
-#if DEBUG
                 Console.WriteLine("\nGeneration " + currentGeneration);
-#endif
+
                 await Evolve();
                 RecordStats();
 #if ETA
@@ -159,7 +161,7 @@ namespace EvolutionaryTravellingSalesman
             if (currentGeneration == config.Get(Config.Int.GenerationCount) - 1 ||
             currentGeneration % config.Get(Config.Int.LogFrequency) == 0)
             {
-                Console.WriteLine("\nGeneration " + currentGeneration);
+                OnLog?.Invoke();
                 m_outputStrings[Data.BestSalesMan] += "Generation " + currentGeneration + "\n";
                 m_outputStrings[Data.BestSalesMan] += bestSalesMan.PrintPath() + "\n";
                 m_outputStrings[Data.WorstSalesMan] += "Generation " + currentGeneration + "\n";

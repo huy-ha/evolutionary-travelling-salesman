@@ -3,6 +3,7 @@ import re
 # TODO plot error bars
 # TODO plot log of data
 
+
 def read_file(filename):
     return [float(x) for x in open(filename, "r").readlines()]
 
@@ -45,5 +46,5 @@ def plot_path(generation=0):
 
 
 if __name__ == "__main__":
-    # plot_costs()
+    plot_costs()
     plot_path(generation=49999)

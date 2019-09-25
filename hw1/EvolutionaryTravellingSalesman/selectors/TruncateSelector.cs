@@ -12,9 +12,8 @@ namespace EvolutionaryTravellingSalesman
         public IEnumerable<T> Select(IEnumerable<T> population)
         {
             return population
-            .OrderBy(individual => individual.Fitness())
+            .OrderByDescending(individual => individual.Fitness())
             .Take((int)(population.Count() * m_reproductionPercentage));
-
         }
     }
 }

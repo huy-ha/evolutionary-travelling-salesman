@@ -1,9 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 namespace EvolutionaryTravellingSalesman
 {
     // TODO do circle cities test file
@@ -21,26 +16,24 @@ namespace EvolutionaryTravellingSalesman
     // Try to minimize evaluations
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             string configFilePath = "config.txt";
             if (args.Length > 0)
                 configFilePath = args[0];
             var config = new Config(configFilePath);
-            Console.WriteLine(config);
-            // TSPSolver solver;
-            // switch (config.Get(Config.String.Solver))
-            // {
-            //     case "MultipleInheritancePriorityTSPSolver":
-            //         solver = new MultipleInheritancePriorityTSPSolver();
-            //         break;
-            //     case "TSPSolver":
-            //     default:
-            //         solver = new TSPSolver();
-            //         break;
-            // }
-            // solver.Configure(config);
-            // solver.Run();
+            TSPSolver solver;
+            switch (config.Get(Config.String.Solver))
+            {
+                case "MultipleInheritancePriorityTSPSolver":
+                    solver = new MultipleInheritancePriorityTSPSolver(config);
+                    break;
+                case "TSPSolver":
+                default:
+                    solver = new TSPSolver(config);
+                    break;
+            }
+            await solver.Run();
         }
     }
 }

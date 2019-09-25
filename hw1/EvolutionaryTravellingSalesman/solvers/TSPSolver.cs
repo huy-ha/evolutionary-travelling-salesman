@@ -24,23 +24,13 @@ namespace EvolutionaryTravellingSalesman
                 m_solverName = value;
             }
         }
-        protected delegate void OnConfigureHandler(Config config);
-        protected event OnConfigureHandler OnConfigure;
-        private Config m_config;
-        public Config config
-        {
-            get => m_config;
-            set
-            {
-                m_config = value;
-                OnConfigure?.Invoke(m_config);
-            }
+        protected Config config;
 
-        }
         protected LinkedList<TravellingSalesman> population;
         int currentGeneration = -1;
-        public enum Data { MinCost, AverageCost, MaxCost, BestSalesMan, WorstSalesMan };
-        private Dictionary<Data, List<float>> m_data = new Dictionary<Data, List<float>>();
+        public enum Data { MinCost, AverageCost, MaxCost, Evaluations, BestSalesMan, WorstSalesMan };
+        private Dictionary<Data, List<float>> m_floatData = new Dictionary<Data, List<float>>();
+        private Dictionary<Data, List<int>> m_intData = new Dictionary<Data, List<int>>();
         private Dictionary<Data, string> m_outputStrings = new Dictionary<Data, string>();
         protected IEnumerable<TravellingSalesman.City> cities;
         #endregion
@@ -51,28 +41,28 @@ namespace EvolutionaryTravellingSalesman
 
         protected int populationCount;
         #endregion
-        public TSPSolver()
-        {
-            generationCount = config.Get(Config.Int.GenerationCount);
-            populationCount = config.Get(Config.Int.PopulationCount);
-            m_data.Add(Data.AverageCost, new List<float>(generationCount));
-            m_data.Add(Data.MaxCost, new List<float>(generationCount));
-            m_data.Add(Data.MinCost, new List<float>(generationCount));
-            m_outputStrings.Add(Data.BestSalesMan, "");
-            m_outputStrings.Add(Data.WorstSalesMan, "");
-        }
 
-        public TSPSolver Configure(Config initConfig)
+        public TSPSolver(Config initConfig)
         {
             config = initConfig;
             findShortestPath = config.Get(Config.Bool.Optimize);
-            return this;
+            generationCount = config.Get(Config.Int.GenerationCount);
+            populationCount = config.Get(Config.Int.PopulationCount);
+            m_floatData.Add(Data.AverageCost, new List<float>(generationCount));
+            m_floatData.Add(Data.MaxCost, new List<float>(generationCount));
+            m_floatData.Add(Data.MinCost, new List<float>(generationCount));
+            m_intData.Add(Data.Evaluations, new List<int>());
+            m_outputStrings.Add(Data.BestSalesMan, "");
+            m_outputStrings.Add(Data.WorstSalesMan, "");
         }
 
         protected void Reset()
         {
             // Make sure that solver name is set corrected
-            string solverName = SolverName;
+            if (this.GetType() != typeof(TSPSolver))
+            {
+                string solverName = SolverName;
+            }
             cities = File.ReadAllLines(config.Get(Config.String.InputFilePath))
                                         .Select(line =>
                                         {
@@ -85,7 +75,7 @@ namespace EvolutionaryTravellingSalesman
             population = new LinkedList<TravellingSalesman>();
             for (int i = 0; i < config.Get(Config.Int.PopulationCount); i++)
             {
-                population.AddLast(new TravellingSalesman(findShortestPath, cities));
+                population.AddLast(new TravellingSalesman(cities));
             }
         }
 
@@ -132,9 +122,10 @@ namespace EvolutionaryTravellingSalesman
             // sales man with highest cost
             var worstSalesMan = population.Aggregate((salesman1, salesman2) => salesman1.Cost < salesman2.Cost ? salesman1 : salesman2);
             float averageCost = population.Average(salesman => salesman.Cost);
-            m_data[Data.MinCost].Add(bestSalesMan.Cost);
-            m_data[Data.AverageCost].Add(averageCost);
-            m_data[Data.MaxCost].Add(worstSalesMan.Cost);
+            m_floatData[Data.MinCost].Add(bestSalesMan.Cost);
+            m_floatData[Data.AverageCost].Add(averageCost);
+            m_floatData[Data.MaxCost].Add(worstSalesMan.Cost);
+            m_intData[Data.Evaluations].Add(TravellingSalesman.evaluations);
 #if DEBUG
             Console.WriteLine("Average: " + averageCost + ", Max: " + worstSalesMan.Cost + ", Min: " + bestSalesMan.Cost);
 #endif
@@ -153,9 +144,10 @@ namespace EvolutionaryTravellingSalesman
             System.IO.File.WriteAllText("output/Config.txt", config.ToString());
             System.IO.File.WriteAllText("output/BestSalesMan.txt", m_outputStrings[Data.BestSalesMan]);
             System.IO.File.WriteAllText("output/WorstSalesMan.txt", m_outputStrings[Data.WorstSalesMan]);
-            System.IO.File.WriteAllText("output/MaxCosts.txt", string.Join("\n", m_data[Data.MaxCost]));
-            System.IO.File.WriteAllText("output/MinCosts.txt", string.Join("\n", m_data[Data.MinCost]));
-            System.IO.File.WriteAllText("output/AvgCosts.txt", string.Join("\n", m_data[Data.AverageCost]));
+            System.IO.File.WriteAllText("output/MaxCosts.txt", string.Join("\n", m_floatData[Data.MaxCost]));
+            System.IO.File.WriteAllText("output/MinCosts.txt", string.Join("\n", m_floatData[Data.MinCost]));
+            System.IO.File.WriteAllText("output/AvgCosts.txt", string.Join("\n", m_floatData[Data.AverageCost]));
+            System.IO.File.WriteAllText("output/Evaluations.txt", string.Join("\n", m_intData[Data.Evaluations]));
         }
     }
 }

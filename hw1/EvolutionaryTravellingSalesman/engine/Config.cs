@@ -40,6 +40,7 @@ namespace EvolutionaryTravellingSalesman
             m_strings.Add(String.InputFilePath, "inputs/tsp.txt");
             m_strings.Add(String.Solver, "TSPSolver");
             m_strings.Add(String.Selector, "TruncateSelector");
+            m_strings.Add(String.Reproducer, "MultipleInheritanceReproducer");
 
             m_bools.Add(Bool.Optimize, true);
 
@@ -52,14 +53,16 @@ namespace EvolutionaryTravellingSalesman
             m_floats.Add(Float.MutationFactorDecay, 1f);
             m_floats.Add(Float.Temperature, 0.9f);
             m_floats.Add(Float.TemperatureDecay, 0.9999f);
-            m_floats.Add(Float.ReproductionPercentage, 0.5f);
+            m_floats.Add(Float.ReproductionPercentage, 0.7f);
             // Read in config file 
             string[] configLines = System.IO.File.ReadAllLines(configFilePath);
-            configLines.First(line => true);
-            // Fill m_values with values from config file
+            if (configLines.Select(line => ParseConfigLine(line)).Any(val => !val))
+            {
+                throw new Exception("Bad Config File Format");
+            }
         }
 
-        private void ParseConfigLine(string line)
+        private bool ParseConfigLine(string line)
         {
             string field = line.Substring(0, line.IndexOf(':'));
             string value = line.Substring(line.IndexOf(':') + 1);
@@ -70,19 +73,24 @@ namespace EvolutionaryTravellingSalesman
             if (Enum.TryParse(field, true, out floatField))
             {
                 m_floats[floatField] = float.Parse(value);
+                return true;
             }
             else if (Enum.TryParse(field, true, out intField))
             {
                 m_ints[intField] = int.Parse(value);
+                return true;
             }
             else if (Enum.TryParse(field, true, out stringField))
             {
                 m_strings[stringField] = value;
+                return true;
             }
             else if (Enum.TryParse(field, true, out boolField))
             {
                 m_bools[boolField] = bool.Parse(value);
+                return true;
             }
+            return false;
         }
 
         #region Getters
@@ -125,7 +133,6 @@ namespace EvolutionaryTravellingSalesman
             output += "\n";
             foreach (var pair in m_floats)
                 output += pair.Key + ":" + pair.Value + "\n";
-            output += "\n";
             return output;
         }
     }

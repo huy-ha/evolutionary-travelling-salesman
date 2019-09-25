@@ -12,56 +12,83 @@ namespace EvolutionaryTravellingSalesman
             get;
             protected set;
         }
-        private bool m_findShortestPath;
 
-        public List<City> path;
+        public LinkedList<Tuple<City, float>> priorities = new LinkedList<Tuple<City, float>>();
+        private City[] m_path;
+
+        public static Config config = null;
         #endregion
 
-        public TravellingSalesman(bool findShortestPath, IEnumerable<City> cities)
+        public static int evaluations = 0;
+
+        public TravellingSalesman(IEnumerable<City> cities)
         {
-            m_findShortestPath = findShortestPath;
+            if (config == null)
+                throw new System.Exception("Travelling Salesman not configured");
             m_rand = new Random();
-            path = FindRandomPath(cities);
+            priorities = new LinkedList<Tuple<City, float>>(
+                cities
+                .Select(city => new Tuple<City, float>(city, (float)(m_rand.NextDouble() % 1))));
+            m_path = ToPath(priorities);
             CalculateCost();
         }
 
-        public TravellingSalesman(List<City> initPath, float initCost = -1)
+        public TravellingSalesman(IEnumerable<Tuple<City, float>> initPriorities, float initCost = -1)
         {
-            path = initPath;
+            if (config == null)
+                throw new System.Exception("Travelling Salesman not configured");
+            priorities = new LinkedList<Tuple<City, float>>(initPriorities);
             m_rand = new Random();
+            UpdatePriorities(priorities, initCost);
+        }
+
+        public void UpdatePriorities(LinkedList<Tuple<City, float>> priorities, float initCost = -1)
+        {
+            this.priorities = priorities;
             if (initCost == -1)
                 CalculateCost();
         }
 
         public float Fitness()
         {
-            return m_findShortestPath ? 1000 / Cost : Cost;
+            return Fitness(Cost);
         }
 
-        private List<City> FindRandomPath(IEnumerable<City> cities)
+        public static float Fitness(float cost)
         {
-            return new List<City>(cities
-                .Zip(
-                cities.Select(city => m_rand.NextDouble()), //create random order
-                (city, order) => new { City = city, Order = order }) //create object with order and city
-                .OrderBy(obj => obj.Order) //sort by order
-                .Select(obj => obj.City)); //get just the city
+            return config.Get(Config.Bool.Optimize) ? 1000 / cost : cost;
         }
 
-        private float CalculateCost(List<City> path)
+        public static float CalculateCost(City[] path)
         {
             float cost = 0;
-            for (int i = 0; i < path.Count - 1; i++)
+            for (int i = 0; i < path.Length - 1; i++)
             {
                 cost += City.Distance(path[i], path[i + 1]);
             }
+            evaluations++;
             return cost;
         }
 
         private float CalculateCost()
         {
-            Cost = CalculateCost(path);
+            if (m_path == null)
+                m_path = ToPath(priorities);
+            Cost = CalculateCost(m_path);
             return Cost;
+        }
+
+        public static float CalculateCost(IEnumerable<Tuple<City, float>> priorities)
+        {
+            return CalculateCost(ToPath(priorities));
+        }
+
+        public static City[] ToPath(IEnumerable<Tuple<City, float>> priorities)
+        {
+
+            return priorities
+            .OrderByDescending(pair => pair.Item2)
+            .Select(pair => pair.Item1).ToArray();
         }
 
         public override string ToString()
@@ -69,9 +96,19 @@ namespace EvolutionaryTravellingSalesman
             return "" + Fitness();
         }
 
+        public string PrioritiesToString()
+        {
+            return PrioritiesToString(priorities);
+        }
+
+        public static string PrioritiesToString(IEnumerable<Tuple<City, float>> priorities)
+        {
+            return string.Join("|", priorities.OrderBy(pair => pair.Item1.id).Select(pair => "(" + pair.Item1.ToString() + ":" + pair.Item2 + ")"));
+        }
+
         public string PrintPath()
         {
-            return string.Join("|", path);
+            return string.Join("|", (object[])m_path);
         }
 
         public class City
@@ -79,10 +116,26 @@ namespace EvolutionaryTravellingSalesman
             private float m_x = 0;
             private float m_y = 0;
 
+            static List<float> _ids = new List<float>();
+
+            public float idKey
+            {
+                get => (m_x * 10) + (m_y * 3) * (m_y * 3);
+            }
+
+            public int id
+            {
+                get => _ids.IndexOf(idKey);
+            }
+
             public City(float x, float y)
             {
                 m_x = x;
                 m_y = y;
+                if (!_ids.Contains(idKey))
+                {
+                    _ids.Add(idKey);
+                }
             }
 
             public static float Distance(City city1, City city2)
@@ -94,7 +147,7 @@ namespace EvolutionaryTravellingSalesman
 
             public override string ToString()
             {
-                return m_x + " " + m_y;
+                return "" + id;
             }
         }
     }

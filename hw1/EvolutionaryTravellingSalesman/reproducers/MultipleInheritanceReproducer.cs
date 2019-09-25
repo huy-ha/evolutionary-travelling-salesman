@@ -1,42 +1,73 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace EvolutionaryTravellingSalesman
 {
-    // TODO cross over (single-point, two-point, random)
-    public class MultipleInheritanceReproducer<T> : Reproducer<T> where T : Phenotype
+    public class MultipleInheritanceReproducer : Reproducer<TravellingSalesman>
     {
         int m_numParents;
-        int m_generationCount;
+        int m_populationCount;
         System.Random m_rand;
-        public MultipleInheritanceReproducer(int generationCount, int numParents = 2)
+
+        public MultipleInheritanceReproducer(int populationCount, int numParents = 2)
         {
-            m_generationCount = generationCount;
+            m_populationCount = populationCount;
             m_numParents = numParents;
             m_rand = new System.Random();
         }
 
-        public IEnumerable<T> Reproduce(IEnumerable<T> parents)
+        public async Task<IEnumerable<TravellingSalesman>> Reproduce(IEnumerable<TravellingSalesman> reproducingPopulation, float mutationFactor, float T)
         {
-            LinkedList<T> offsprings = new LinkedList<T>();
-            while (offsprings.Count() < m_generationCount)
+            List<Task<TravellingSalesman>> offsprings = new List<Task<TravellingSalesman>>();
+            int reproducingPopulationCount = reproducingPopulation.Count();
+            while (offsprings.Count() < m_populationCount)
             {
-                // find m_numParents parents
+                offsprings.Add(Task.Run(() =>
+                {
+                    // find m_numParents parents
+                    var parentIndices = Enumerable.Range(0, 2).Select(x => m_rand.Next() % reproducingPopulationCount);
+                    var parents = parentIndices.Select(idx => reproducingPopulation.ElementAt(idx));
 
-                // find path
-                // IEnumerable<TravellingSalesman> offspring = await Task.WhenAll(
-                // parents.Select(parent => Task.Run(() =>
-                //  new TravellingSalesman(parent, T, findShortestPath))));
-                // while (offspring.Count() < populationCount)
-                // {
-                //     offspring = offspring.Concat(                             // 4. Concatenate newly created children with previous children
-                //         await Task.WhenAll(                                   // 3. Wait until all constructions of children is finished
-                //             parents.Select(
-                //                 parent => Task.Run(() =>                      // 2. Run the constructor asynchronously 
-                //                 new TravellingSalesman(parent, T, findShortestPath))).ToArray())); // 1. From each parent, create a new TravellingSalesman
-                // }
+
+                    Debug.Assert(parents.Count() == 2);
+                    var firstParentPriorities = parents.ElementAt(0).priorities.OrderBy(pair => pair.Item1.id);
+                    var secondParentPriorities = parents.ElementAt(1).priorities.OrderBy(pair => pair.Item1.id);
+
+                    // Perform cross over
+                    int citiesCount = firstParentPriorities.Count();
+                    int crossOverIdx1 = m_rand.Next() % citiesCount;
+                    int crossOverIdx2 = m_rand.Next() % citiesCount;
+                    while (crossOverIdx1 >= crossOverIdx2)
+                    {
+                        if (crossOverIdx1 > crossOverIdx2)
+                        {
+                            int tmp = crossOverIdx2;
+                            crossOverIdx1 = crossOverIdx2;
+                            crossOverIdx2 = tmp;
+                        }
+                        else
+                        {
+                            crossOverIdx2 = m_rand.Next() % citiesCount;
+                        }
+                    }
+
+                    var childPriority =
+                    new LinkedList<Tuple<TravellingSalesman.City, float>>(
+                    firstParentPriorities.Take(crossOverIdx1)
+                    .Concat(secondParentPriorities.Take(crossOverIdx2).TakeLast(crossOverIdx2 - crossOverIdx1))
+                    .Concat(firstParentPriorities.TakeLast(citiesCount - crossOverIdx2)));
+
+                    //Mutation
+                    float childFitness = PrioritiesMutator.MutatePriorities(childPriority, mutationFactor, T);
+                    // Streamline mutation so less evaluations
+                    return new TravellingSalesman(childPriority);
+                }));
             }
-            return offsprings;
+
+            return await Task.WhenAll(offsprings);
         }
     }
 }

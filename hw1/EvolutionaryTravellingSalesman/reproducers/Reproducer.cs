@@ -1,8 +1,9 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 namespace EvolutionaryTravellingSalesman
 {
     public interface Reproducer<T> where T : Phenotype
     {
-        IEnumerable<T> Reproduce(IEnumerable<T> parents);
+        Task<IEnumerable<T>> Reproduce(IEnumerable<T> reproducingPopulation, float mutationFactor, float T);
     }
 }

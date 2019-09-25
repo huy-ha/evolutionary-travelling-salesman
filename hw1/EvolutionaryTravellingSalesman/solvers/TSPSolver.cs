@@ -46,6 +46,10 @@ namespace EvolutionaryTravellingSalesman
         protected int generationCount;
 
         protected int populationCount;
+
+        int lastBestSalesmanGeneration = -1;
+        float lastBestSalesmanCost = -1;
+        float lastBestSalesmanFitness = -1;
         #endregion
 
         public TSPSolver(Config initConfig)
@@ -103,7 +107,7 @@ namespace EvolutionaryTravellingSalesman
                 generationStopWatch.Reset();
                 generationStopWatch.Start();
 #endif
-                Console.WriteLine("\nGeneration " + currentGeneration);
+                Console.WriteLine("Generation {0} | Last Best: {1} (Generation {2})", currentGeneration, lastBestSalesmanCost, lastBestSalesmanGeneration);
 
                 await Evolve();
                 RecordStats();
@@ -157,6 +161,12 @@ namespace EvolutionaryTravellingSalesman
             m_floatData[Data.AverageCost].Add(averageCost);
             m_floatData[Data.MaxCost].Add(worstSalesMan.Cost);
             m_intData[Data.Evaluations].Add(TravellingSalesman.evaluations);
+            if (lastBestSalesmanFitness < bestSalesMan.Fitness())
+            {
+                lastBestSalesmanGeneration = currentGeneration;
+                lastBestSalesmanFitness = bestSalesMan.Fitness();
+                lastBestSalesmanCost = bestSalesMan.Cost;
+            }
 #if DEBUG
             Console.WriteLine("Average: " + averageCost + ", Max: " + worstSalesMan.Cost + ", Min: " + bestSalesMan.Cost);
 #endif

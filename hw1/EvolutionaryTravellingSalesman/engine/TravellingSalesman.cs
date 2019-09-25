@@ -14,7 +14,7 @@ namespace EvolutionaryTravellingSalesman
         }
 
         public LinkedList<Tuple<City, float>> priorities = new LinkedList<Tuple<City, float>>();
-        private City[] m_path;
+        private City[] m_path = null;
 
         public static Config config = null;
         #endregion
@@ -33,20 +33,24 @@ namespace EvolutionaryTravellingSalesman
             CalculateCost();
         }
 
-        public TravellingSalesman(IEnumerable<Tuple<City, float>> initPriorities, float initCost = -1)
+        public TravellingSalesman(IEnumerable<Tuple<City, float>> initPriorities, float initFitness = -1)
         {
             if (config == null)
                 throw new System.Exception("Travelling Salesman not configured");
             priorities = new LinkedList<Tuple<City, float>>(initPriorities);
             m_rand = new Random();
-            UpdatePriorities(priorities, initCost);
+            UpdatePriorities(priorities, initFitness);
         }
 
-        public void UpdatePriorities(LinkedList<Tuple<City, float>> priorities, float initCost = -1)
+        public void UpdatePriorities(LinkedList<Tuple<City, float>> priorities, float initFitness = -1)
         {
             this.priorities = priorities;
-            if (initCost == -1)
+            if (m_path == null)
+                m_path = ToPath(priorities);
+            if (initFitness == -1)
                 CalculateCost();
+            else
+                Cost = FitnessToCost(Cost);
         }
 
         public float Fitness()
@@ -57,6 +61,11 @@ namespace EvolutionaryTravellingSalesman
         public static float Fitness(float cost)
         {
             return config.Get(Config.Bool.Optimize) ? 1000 / cost : cost;
+        }
+
+        public static float FitnessToCost(float fitness)
+        {
+            return config.Get(Config.Bool.Optimize) ? 1000 / fitness : fitness;
         }
 
         public static float CalculateCost(City[] path)
@@ -85,7 +94,6 @@ namespace EvolutionaryTravellingSalesman
 
         public static City[] ToPath(IEnumerable<Tuple<City, float>> priorities)
         {
-
             return priorities
             .OrderByDescending(pair => pair.Item2)
             .Select(pair => pair.Item1).ToArray();
@@ -108,6 +116,8 @@ namespace EvolutionaryTravellingSalesman
 
         public string PrintPath()
         {
+            if (m_path == null)
+                m_path = ToPath(priorities);
             return string.Join("|", (object[])m_path);
         }
 

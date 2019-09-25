@@ -6,7 +6,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 namespace EvolutionaryTravellingSalesman
 {
-    class MultipleInheritancePriorityTSPSolver : TSPSolver
+    class ElitesAnnealingTSPSolver : TSPSolver
     {
         protected float
         mutationFactor,
@@ -18,7 +18,7 @@ namespace EvolutionaryTravellingSalesman
 
         Selector<TravellingSalesman> Selector;
         Reproducer<TravellingSalesman> Reproducer;
-        public MultipleInheritancePriorityTSPSolver(Config initConfig) : base(initConfig)
+        public ElitesAnnealingTSPSolver(Config initConfig) : base(initConfig)
         {
 
             SolverName = "Multiple Inheritance Priority TSP Solver";
@@ -54,7 +54,8 @@ namespace EvolutionaryTravellingSalesman
         }
 
         public override async Task Evolve()
-        {//select
+        {
+            //select
             var parents = Selector.Select(population);
 #if DEBUG
             float parentsAvgDist = parents.Average(salesman => salesman.Cost);
@@ -69,7 +70,7 @@ namespace EvolutionaryTravellingSalesman
 #endif
             var elites = population.OrderByDescending(salesman => salesman.Fitness()).Take((int)(elitistPercentage * populationCount));
 #if DEBUG
-            Console.WriteLine("Got {0} elites with average cost of {1}", elites.Count(), elites.Average(elites => elites.Cost));
+            Console.WriteLine("Got {0} elites with average cost of {1}", elites.Count(), elites.Average(elite => elite.Cost));
 #endif
             population = new LinkedList<TravellingSalesman>(offsprings.Concat(elites).OrderByDescending(salesman => salesman.Fitness()).Take(populationCount));
             mutationFactor *= mutationFactorDecay;

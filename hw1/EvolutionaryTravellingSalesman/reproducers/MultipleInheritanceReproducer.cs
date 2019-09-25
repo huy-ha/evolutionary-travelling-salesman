@@ -63,7 +63,7 @@ namespace EvolutionaryTravellingSalesman
                     //Mutation
                     float childFitness = PrioritiesMutator.MutatePriorities(childPriority, mutationFactor, T);
                     // Streamline mutation so less evaluations
-                    return new TravellingSalesman(childPriority, childFitness);
+                    return new TravellingSalesman(childPriority);
                 }));
             }
 

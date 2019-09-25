@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 namespace EvolutionaryTravellingSalesman
 {
+    // TODO fix extremely quick convergence
     // TODO do circle cities test file
     // TODO implement Dijkstra's to know limit
     // TODO implement random search to know baseline

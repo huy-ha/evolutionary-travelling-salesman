@@ -26,8 +26,9 @@ namespace EvolutionaryTravellingSalesman
         }
         protected Config config;
         // Keeps track of how long last N generations took
+#if ETA
         Queue<TimeSpan> generationTimeSpan = new Queue<TimeSpan>(10);
-
+#endif
         protected LinkedList<TravellingSalesman> population;
         int currentGeneration = -1;
         public enum Data { MinCost, AverageCost, MaxCost, Evaluations, BestSalesMan, WorstSalesMan };
@@ -89,17 +90,21 @@ namespace EvolutionaryTravellingSalesman
             Stopwatch epochStopWatch = new Stopwatch();
             epochStopWatch.Start();
             int generationCount = config.Get(Config.Int.GenerationCount);
+#if ETA
             Stopwatch generationStopWatch = new Stopwatch();
+#endif
             for (currentGeneration = 0; currentGeneration < generationCount; currentGeneration++)
             {
+#if ETA
                 generationStopWatch.Reset();
                 generationStopWatch.Start();
+#endif
 #if DEBUG
                 Console.WriteLine("\nGeneration " + currentGeneration);
 #endif
                 await Evolve();
                 RecordStats();
-
+#if ETA
                 if (currentGeneration % 5 == 4)
                 {
                     TimeSpan averageSecondsPerGeneration = new TimeSpan(generationTimeSpan.Aggregate((ts1, ts2) =>
@@ -119,6 +124,7 @@ namespace EvolutionaryTravellingSalesman
                 {
                     generationTimeSpan.Dequeue();
                 }
+#endif
             }
             epochStopWatch.Stop();
             var ts = epochStopWatch.Elapsed;
@@ -139,9 +145,9 @@ namespace EvolutionaryTravellingSalesman
         public void RecordStats()
         {
             // sales man with lowest cost
-            var bestSalesMan = population.Aggregate((salesman1, salesman2) => salesman1.Cost > salesman2.Cost ? salesman1 : salesman2);
+            var bestSalesMan = population.Aggregate((salesman1, salesman2) => salesman1.Fitness() > salesman2.Fitness() ? salesman1 : salesman2);
             // sales man with highest cost
-            var worstSalesMan = population.Aggregate((salesman1, salesman2) => salesman1.Cost < salesman2.Cost ? salesman1 : salesman2);
+            var worstSalesMan = population.Aggregate((salesman1, salesman2) => salesman1.Fitness() < salesman2.Fitness() ? salesman1 : salesman2);
             float averageCost = population.Average(salesman => salesman.Cost);
             m_floatData[Data.MinCost].Add(bestSalesMan.Cost);
             m_floatData[Data.AverageCost].Add(averageCost);
@@ -153,6 +159,7 @@ namespace EvolutionaryTravellingSalesman
             if (currentGeneration == config.Get(Config.Int.GenerationCount) - 1 ||
             currentGeneration % config.Get(Config.Int.LogFrequency) == 0)
             {
+                Console.WriteLine("\nGeneration " + currentGeneration);
                 m_outputStrings[Data.BestSalesMan] += "Generation " + currentGeneration + "\n";
                 m_outputStrings[Data.BestSalesMan] += bestSalesMan.PrintPath() + "\n";
                 m_outputStrings[Data.WorstSalesMan] += "Generation " + currentGeneration + "\n";

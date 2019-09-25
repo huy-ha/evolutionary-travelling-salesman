@@ -58,11 +58,10 @@ namespace EvolutionaryTravellingSalesman
 #endif
             //mutate
             var offsprings = await Reproducer.Reproduce(parents, mutationFactor, temperature);
-            var elites = population.OrderBy(salesman => salesman.Fitness()).Take((int)(elitistPercentage * populationCount));
+            var elites = population.OrderByDescending(salesman => salesman.Fitness()).Take((int)(elitistPercentage * populationCount));
             population = new LinkedList<TravellingSalesman>(offsprings.Concat(elites).OrderBy(salesman => salesman.Fitness()).Take(populationCount));
             mutationFactor *= mutationFactorDecay;
-            temperature = temperatureDecay;
+            temperature *= temperatureDecay;
         }
-
     }
 }

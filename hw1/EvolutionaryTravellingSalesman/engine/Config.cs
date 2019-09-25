@@ -49,11 +49,11 @@ namespace EvolutionaryTravellingSalesman
             m_ints.Add(Int.LogFrequency, 10);
 
             m_floats.Add(Float.ElitistPercentage, 0.02f);
-            m_floats.Add(Float.InitMutationFactor, 0.2f);
-            m_floats.Add(Float.MutationFactorDecay, 1f);
+            m_floats.Add(Float.InitMutationFactor, 0.5f);
+            m_floats.Add(Float.MutationFactorDecay, 0.9999f);
             m_floats.Add(Float.Temperature, 0.9f);
             m_floats.Add(Float.TemperatureDecay, 0.9999f);
-            m_floats.Add(Float.ReproductionPercentage, 0.7f);
+            m_floats.Add(Float.ReproductionPercentage, 0.5f);
             // Read in config file 
             string[] configLines = System.IO.File.ReadAllLines(configFilePath);
             if (configLines.Select(line => ParseConfigLine(line)).Any(val => !val))

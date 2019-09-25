@@ -45,6 +45,12 @@ namespace EvolutionaryTravellingSalesman
                     Reproducer = new MultipleInheritanceReproducer(populationCount);
                     break;
             }
+#if DEBUG
+            OnLog += () =>
+            {
+                Console.WriteLine("mutationFactor:{0} | temperature:{1} | populationCount {2}", mutationFactor, temperature, populationCount);
+            };
+#endif
         }
 
         public override async Task Evolve()
@@ -58,8 +64,14 @@ namespace EvolutionaryTravellingSalesman
 #endif
             //mutate
             var offsprings = await Reproducer.Reproduce(parents, mutationFactor, temperature);
+#if DEBUG
+            Console.WriteLine("Got {0} offsprings", offsprings.Count());
+#endif
             var elites = population.OrderByDescending(salesman => salesman.Fitness()).Take((int)(elitistPercentage * populationCount));
-            population = new LinkedList<TravellingSalesman>(offsprings.Concat(elites).OrderBy(salesman => salesman.Fitness()).Take(populationCount));
+#if DEBUG
+            Console.WriteLine("Got {0} elites with average cost of {1}", elites.Count(), elites.Average(elites => elites.Cost));
+#endif
+            population = new LinkedList<TravellingSalesman>(offsprings.Concat(elites).OrderByDescending(salesman => salesman.Fitness()).Take(populationCount));
             mutationFactor *= mutationFactorDecay;
             temperature *= temperatureDecay;
         }

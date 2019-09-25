@@ -2,6 +2,7 @@
 namespace EvolutionaryTravellingSalesman
 {
     // TODO fix extremely quick convergence
+    // TODO exit and save data at any points
     // TODO do circle cities test file
     // TODO implement Dijkstra's to know limit
     // TODO implement random search to know baseline

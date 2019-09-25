@@ -1,7 +1,7 @@
 InputFilePath:inputs/tsp.txt
-Solver:MultipleInheritancePriorityTSPSolver
-GenerationCount:100000
-PopulationCount:200
+Solver:ElitesAnnealingTSPSolver
+GenerationCount:20
+PopulationCount:50
 Temperature:0.9
-Temperature:0.9999
+TemperatureDecay:0.9999
 Optimize:True

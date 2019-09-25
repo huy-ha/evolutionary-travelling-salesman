@@ -27,8 +27,9 @@ namespace EvolutionaryTravellingSalesman
             {
                 offsprings.Add(Task.Run(() =>
                 {
+                    Random threadRand = new Random(offsprings.Count());
                     // find m_numParents parents
-                    var parentIndices = Enumerable.Range(0, 2).Select(x => m_rand.Next() % reproducingPopulationCount);
+                    var parentIndices = Enumerable.Range(0, 2).Select(x => threadRand.Next() % reproducingPopulationCount);
                     var parents = parentIndices.Select(idx => reproducingPopulation.ElementAt(idx));
 
 
@@ -40,12 +41,15 @@ namespace EvolutionaryTravellingSalesman
 #endif
                     // Perform cross over
                     int citiesCount = firstParentPriorities.Count();
-                    int crossOverIdx1 = m_rand.Next() % citiesCount;
-                    int crossOverIdx2 = m_rand.Next() % citiesCount;
+                    int crossOverIdx1 = threadRand.Next() % citiesCount;
+                    int crossOverIdx2 = threadRand.Next() % citiesCount;
                     while (crossOverIdx1 >= crossOverIdx2)
                     {
-                        crossOverIdx1 = m_rand.Next() % citiesCount;
-                        crossOverIdx2 = m_rand.Next() % citiesCount;
+#if DEBUG
+                        Console.WriteLine("\t\t clashing idx {0} and {1}", crossOverIdx1, crossOverIdx2);
+#endif                        
+                        crossOverIdx1 = threadRand.Next() % citiesCount;
+                        crossOverIdx2 = threadRand.Next() % citiesCount;
                     }
 #if DEBUG
                     Console.WriteLine("\tgot crossover ids {0} and {1}", crossOverIdx1, crossOverIdx2);

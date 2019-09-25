@@ -27,7 +27,8 @@ namespace EvolutionaryTravellingSalesman
         {
             PopulationCount,
             GenerationCount,
-            LogFrequency
+            LogFrequency,
+            OutputSaveFrequency
         };
         private Dictionary<Float, float> m_floats = new Dictionary<Float, float>();
         private Dictionary<Int, int> m_ints = new Dictionary<Int, int>();
@@ -47,6 +48,7 @@ namespace EvolutionaryTravellingSalesman
             m_ints.Add(Int.GenerationCount, 100000);
             m_ints.Add(Int.PopulationCount, 100);
             m_ints.Add(Int.LogFrequency, 10);
+            m_ints.Add(Int.OutputSaveFrequency, 10);
 
             m_floats.Add(Float.ElitistPercentage, 0.02f);
             m_floats.Add(Float.InitMutationFactor, 0.5f);

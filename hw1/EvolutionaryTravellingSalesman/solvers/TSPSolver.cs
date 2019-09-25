@@ -93,6 +93,7 @@ namespace EvolutionaryTravellingSalesman
             Stopwatch epochStopWatch = new Stopwatch();
             epochStopWatch.Start();
             int generationCount = config.Get(Config.Int.GenerationCount);
+            int saveOutputFrequency = config.Get(Config.Int.OutputSaveFrequency);
 #if ETA
             Stopwatch generationStopWatch = new Stopwatch();
 #endif
@@ -106,8 +107,9 @@ namespace EvolutionaryTravellingSalesman
 
                 await Evolve();
                 RecordStats();
+                if (currentGeneration % saveOutputFrequency == 0) SaveStats();
 #if ETA
-                if (currentGeneration % 5 == 4)
+                if (currentGeneration % 5 == 0)
                 {
                     TimeSpan averageSecondsPerGeneration = new TimeSpan(generationTimeSpan.Aggregate((ts1, ts2) =>
                     {

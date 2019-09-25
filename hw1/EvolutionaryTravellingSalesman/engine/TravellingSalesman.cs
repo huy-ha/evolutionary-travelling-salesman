@@ -27,8 +27,9 @@ namespace EvolutionaryTravellingSalesman
                 throw new System.Exception("Travelling Salesman not configured");
             m_rand = new Random();
             priorities = new LinkedList<Tuple<City, float>>(
-                cities
-                .Select(city => new Tuple<City, float>(city, (float)(m_rand.NextDouble() % 1))));
+                NormalizePriorities(
+                    cities
+                    .Select(city => new Tuple<City, float>(city, (float)(m_rand.NextDouble() % 1)))));
             m_path = ToPath(priorities);
             CalculateCost();
         }
@@ -37,9 +38,16 @@ namespace EvolutionaryTravellingSalesman
         {
             if (config == null)
                 throw new System.Exception("Travelling Salesman not configured");
-            priorities = new LinkedList<Tuple<City, float>>(initPriorities);
+            priorities = new LinkedList<Tuple<City, float>>(NormalizePriorities(initPriorities));
             m_rand = new Random();
             UpdatePriorities(priorities, initFitness);
+        }
+
+        public IEnumerable<Tuple<City, float>> NormalizePriorities(IEnumerable<Tuple<City, float>> unnormalizedPriorities)
+        {
+            // Normalize all priorities s.t. this city is has highest priority
+            var cityWithPriority = unnormalizedPriorities.First(pair => pair.Item1.id == 0);
+            return unnormalizedPriorities.Select(pair => new Tuple<City, float>(pair.Item1, 1 - (pair.Item2 % cityWithPriority.Item2)));
         }
 
         public void UpdatePriorities(LinkedList<Tuple<City, float>> priorities, float initFitness = -1)

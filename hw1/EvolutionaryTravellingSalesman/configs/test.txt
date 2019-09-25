@@ -1,0 +1,7 @@
+InputFilePath:inputs/tsp.txt
+Solver:ElitesAnnealingTSPSolver
+GenerationCount:100
+PopulationCount:50
+Temperature:0.7
+TemperatureDecay:0.9
+Optimize:True

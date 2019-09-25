@@ -26,8 +26,8 @@ namespace EvolutionaryTravellingSalesman
             TSPSolver solver;
             switch (config.Get(Config.String.Solver))
             {
-                case "MultipleInheritancePriorityTSPSolver":
-                    solver = new MultipleInheritancePriorityTSPSolver(config);
+                case "ElitesAnnealingTSPSolver":
+                    solver = new ElitesAnnealingTSPSolver(config);
                     break;
                 case "TSPSolver":
                 default:

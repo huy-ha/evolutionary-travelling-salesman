@@ -33,7 +33,7 @@ namespace EvolutionaryTravellingSalesman
                 node.Value = new Tuple<TravellingSalesman.City, float>(city, newPriority);
             }
             float newFitness = TravellingSalesman.Fitness(TravellingSalesman.CalculateCost(mutatedPriorities));
-            if (newFitness > oldFitness || rand.NextDouble() % 1 < T)
+            if (newFitness > oldFitness || (rand.NextDouble() % 1) < T)
             {
                 priorities = mutatedPriorities;
                 return newFitness;

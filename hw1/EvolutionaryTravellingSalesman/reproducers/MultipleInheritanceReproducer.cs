@@ -44,16 +44,8 @@ namespace EvolutionaryTravellingSalesman
                     int crossOverIdx2 = m_rand.Next() % citiesCount;
                     while (crossOverIdx1 >= crossOverIdx2)
                     {
-                        if (crossOverIdx1 > crossOverIdx2)
-                        {
-                            int tmp = crossOverIdx2;
-                            crossOverIdx1 = crossOverIdx2;
-                            crossOverIdx2 = tmp;
-                        }
-                        else
-                        {
-                            crossOverIdx2 = m_rand.Next() % citiesCount;
-                        }
+                        crossOverIdx1 = m_rand.Next() % citiesCount;
+                        crossOverIdx2 = m_rand.Next() % citiesCount;
                     }
 #if DEBUG
                     Console.WriteLine("\tgot crossover ids {0} and {1}", crossOverIdx1, crossOverIdx2);

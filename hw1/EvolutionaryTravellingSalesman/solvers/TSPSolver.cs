@@ -25,6 +25,8 @@ namespace EvolutionaryTravellingSalesman
             }
         }
         protected Config config;
+        // Keeps track of how long last N generations took
+        Queue<TimeSpan> generationTimeSpan = new Queue<TimeSpan>(10);
 
         protected LinkedList<TravellingSalesman> population;
         int currentGeneration = -1;
@@ -87,17 +89,36 @@ namespace EvolutionaryTravellingSalesman
             Stopwatch epochStopWatch = new Stopwatch();
             epochStopWatch.Start();
             int generationCount = config.Get(Config.Int.GenerationCount);
+            Stopwatch generationStopWatch = new Stopwatch();
             for (currentGeneration = 0; currentGeneration < generationCount; currentGeneration++)
             {
-                Stopwatch generationStopWatch = new Stopwatch();
+                generationStopWatch.Reset();
                 generationStopWatch.Start();
 #if DEBUG
                 Console.WriteLine("\nGeneration " + currentGeneration);
 #endif
                 await Evolve();
-                generationStopWatch.Stop();
                 RecordStats();
-                // TODO calculate time left
+
+                if (currentGeneration % 5 == 4)
+                {
+                    TimeSpan averageSecondsPerGeneration = new TimeSpan(generationTimeSpan.Aggregate((ts1, ts2) =>
+                    {
+                        return ts1.Add(ts2);
+                    }).Ticks / generationTimeSpan.Count());
+                    Console.WriteLine(
+                        currentGeneration +
+                        "|" +
+                        averageSecondsPerGeneration +
+                        "|"
+                        + averageSecondsPerGeneration * (generationCount - currentGeneration));
+                }
+                generationStopWatch.Stop();
+                generationTimeSpan.Enqueue(generationStopWatch.Elapsed);
+                if (generationTimeSpan.Count() > 10)
+                {
+                    generationTimeSpan.Dequeue();
+                }
             }
             epochStopWatch.Stop();
             var ts = epochStopWatch.Elapsed;

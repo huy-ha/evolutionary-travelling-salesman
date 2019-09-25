@@ -17,12 +17,13 @@ namespace EvolutionaryTravellingSalesman
             int count = priorities.Count();
             Random rand = new Random();
             float oldFitness = TravellingSalesman.Fitness(TravellingSalesman.CalculateCost(priorities));
+            var mutatedPriorities = new LinkedList<Tuple<TravellingSalesman.City, float>>(priorities);
+            int mutationCount = rand.Next() % (int)(mutationFactor * count);
             //TODO code both multiple and single mutation
-            for (int mutation = 0, mutationCount = (int)(mutationFactor * count); mutation < mutationCount; mutation++)
+            for (int mutation = 0; mutation < mutationCount; mutation++)
             {
                 int idx = rand.Next() % count;
-                var node = priorities.Find(priorities.ElementAt(idx));
-                var oldVal = node.Value;
+                var node = mutatedPriorities.Find(mutatedPriorities.ElementAt(idx));
                 var city = node.Value.Item1;
                 float priority = node.Value.Item2;
                 float newPriority =
@@ -30,16 +31,12 @@ namespace EvolutionaryTravellingSalesman
                     MathF.Max(
                         priority + ((float)rand.NextDouble() % 1 - 0.5f) * 0.1f, 0), 1);
                 node.Value = new Tuple<TravellingSalesman.City, float>(city, newPriority);
-                float newFitness = TravellingSalesman.Fitness(TravellingSalesman.CalculateCost(priorities));
-                if (newFitness > oldFitness || rand.NextDouble() % 1 < T)
-                {
-                    // Keep the swap
-                    oldFitness = newFitness;
-                }
-                else
-                {
-                    node.Value = oldVal;
-                }
+            }
+            float newFitness = TravellingSalesman.Fitness(TravellingSalesman.CalculateCost(mutatedPriorities));
+            if (newFitness > oldFitness || rand.NextDouble() % 1 < T)
+            {
+                priorities = mutatedPriorities;
+                return newFitness;
             }
             return oldFitness;
         }

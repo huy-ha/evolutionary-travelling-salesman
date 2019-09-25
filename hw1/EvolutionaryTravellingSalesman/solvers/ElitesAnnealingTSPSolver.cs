@@ -21,7 +21,7 @@ namespace EvolutionaryTravellingSalesman
         public ElitesAnnealingTSPSolver(Config initConfig) : base(initConfig)
         {
 
-            SolverName = "Multiple Inheritance Priority TSP Solver";
+            SolverName = "Elites Annealing TSPSolver";
             TravellingSalesman.config = config;
             mutationFactor = config.Get(Config.Float.InitMutationFactor);
             mutationFactorDecay = config.Get(Config.Float.MutationFactorDecay);
@@ -43,6 +43,7 @@ namespace EvolutionaryTravellingSalesman
                 case "MultipleInheritanceReproducer":
                     Reproducer = new MultipleInheritanceReproducer(populationCount);
                     break;
+                case "AsexualSwapReproducer":
                 default:
                     Reproducer = new AsexualSwapReproducer(populationCount);
                     break;

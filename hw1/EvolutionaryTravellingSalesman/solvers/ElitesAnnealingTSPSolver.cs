@@ -41,8 +41,10 @@ namespace EvolutionaryTravellingSalesman
             switch (config.Get(Config.String.Reproducer))
             {
                 case "MultipleInheritanceReproducer":
-                default:
                     Reproducer = new MultipleInheritanceReproducer(populationCount);
+                    break;
+                default:
+                    Reproducer = new AsexualSwapReproducer(populationCount);
                     break;
             }
 #if DEBUG

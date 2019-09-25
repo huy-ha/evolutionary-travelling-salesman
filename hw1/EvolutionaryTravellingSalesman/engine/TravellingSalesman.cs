@@ -155,9 +155,10 @@ namespace EvolutionaryTravellingSalesman
                 return MathF.Sqrt(dx * dx + dy * dy);
             }
 
+            // DO NOT CHANGE BECAUSE OUTPUT USES THIS
             public override string ToString()
             {
-                return "" + id;
+                return m_x + " " + m_y;
             }
         }
     }

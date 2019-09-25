@@ -8,11 +8,11 @@ namespace EvolutionaryTravellingSalesman
     {
         public static void Mutate(TravellingSalesman salesman, float mutationFactor, float T)
         {
-            float mutatedFitness = MutatePriorities(salesman.priorities, mutationFactor, T);
-            salesman.UpdatePriorities(salesman.priorities, mutatedFitness);
+            salesman.priorities = MutatePriorities(salesman.priorities, mutationFactor, T);
+            salesman.UpdatePriorities(salesman.priorities);
         }
 
-        public static float MutatePriorities(LinkedList<Tuple<TravellingSalesman.City, float>> priorities, float mutationFactor, float T)
+        public static LinkedList<Tuple<TravellingSalesman.City, float>> MutatePriorities(LinkedList<Tuple<TravellingSalesman.City, float>> priorities, float mutationFactor, float T)
         {
             int count = priorities.Count();
             Random rand = new Random();
@@ -35,10 +35,9 @@ namespace EvolutionaryTravellingSalesman
             float newFitness = TravellingSalesman.Fitness(TravellingSalesman.CalculateCost(mutatedPriorities));
             if (newFitness > oldFitness || (rand.NextDouble() % 1) < T)
             {
-                priorities = mutatedPriorities;
-                return newFitness;
+                return mutatedPriorities;
             }
-            return oldFitness;
+            return priorities;
         }
     }
 

@@ -76,7 +76,7 @@ namespace EvolutionaryTravellingSalesman
             cities = File.ReadAllLines(config.Get(Config.String.InputFilePath))
                                         .Select(line =>
                                         {
-                                            var coors = line.Split("\t", 2);
+                                            var coors = line.Split(" ", 2);
                                             var x = float.Parse(coors[0]);
                                             var y = float.Parse(coors[1]);
                                             return new TravellingSalesman.City(x, y);

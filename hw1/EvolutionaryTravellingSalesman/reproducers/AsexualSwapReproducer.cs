@@ -35,12 +35,14 @@ namespace EvolutionaryTravellingSalesman
                     {
                         if (childFitness < parent.Fitness() || ((rand.NextDouble() % 1) >= T && attempt > 0))
                         {
+                            System.Diagnostics.Debug.Assert(childPriorities.Count() == parent.priorities.Count());
                             return new TravellingSalesman(childPriorities);
                         }
                         (childPriorities, childFitness) = SingleSwapMutator.MutatePriorities( //2. Mutate parent priorities with mutation factor and T
                                                             parent.priorities, // 1. Get random parent
                                                              mutationFactor, T);
                     }
+                    System.Diagnostics.Debug.Assert(childPriorities.Count() == parent.priorities.Count());
                     // Give up after 10 attempts
                     return new TravellingSalesman(childPriorities);
                     // try new offspring

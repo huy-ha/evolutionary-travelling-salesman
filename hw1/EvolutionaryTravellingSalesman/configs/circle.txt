@@ -1,0 +1,10 @@
+InputFilePath:inputs/circle100.txt
+Solver:ElitesAnnealingTSPSolver
+Reproducer:AsexualSwapReproducer
+GenerationCount:1000000
+PopulationCount:200
+LogFrequency:300
+ElitistPercentage:0.1
+Temperature:0.002
+TemperatureDecay:0.99999
+Optimize:True

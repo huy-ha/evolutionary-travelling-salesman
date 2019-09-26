@@ -76,7 +76,7 @@ namespace EvolutionaryTravellingSalesman
             cities = File.ReadAllLines(config.Get(Config.String.InputFilePath))
                                         .Select(line =>
                                         {
-                                            var coors = line.Split(" ", 2);
+                                            var coors = line.Split("\t", 2);
                                             var x = float.Parse(coors[0]);
                                             var y = float.Parse(coors[1]);
                                             return new TravellingSalesman.City(x, y);
@@ -107,11 +107,11 @@ namespace EvolutionaryTravellingSalesman
                 generationStopWatch.Reset();
                 generationStopWatch.Start();
 #endif
-                Console.WriteLine("Generation {0} | Last Best: {1} (Generation {2})", currentGeneration, lastBestSalesmanCost, lastBestSalesmanGeneration);
+                // Console.WriteLine("Generation {0} | Last Best: {1} (Generation {2})", currentGeneration, lastBestSalesmanCost, lastBestSalesmanGeneration);
 
                 await Evolve();
                 RecordStats();
-                OnLog?.Invoke();
+                // OnLog?.Invoke();
                 if (currentGeneration % saveOutputFrequency == 0) SaveStats();
 #if ETA
                 if (currentGeneration % 5 == 0)
@@ -167,6 +167,8 @@ namespace EvolutionaryTravellingSalesman
                 lastBestSalesmanGeneration = currentGeneration;
                 lastBestSalesmanFitness = bestSalesMan.Fitness();
                 lastBestSalesmanCost = bestSalesMan.Cost;
+
+                Console.WriteLine("Best Cost: {0} | Generation: {1} | {2}", lastBestSalesmanCost, lastBestSalesmanGeneration, System.DateTime.Now);
             }
 #if DEBUG
             Console.WriteLine("Average: " + averageCost + ", Max: " + worstSalesMan.Cost + ", Min: " + bestSalesMan.Cost);

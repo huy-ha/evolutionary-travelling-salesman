@@ -20,7 +20,7 @@ namespace EvolutionaryTravellingSalesman
             float oldFitness = TravellingSalesman.Fitness(TravellingSalesman.CalculateCost(priorities));
             var mutatedPriorities = new LinkedList<Tuple<TravellingSalesman.City, float>>(priorities);
             var testPriorities = new LinkedList<Tuple<TravellingSalesman.City, float>>(priorities);
-            int mutationCount = rand.Next() % (int)(mutationFactor * count);
+            int mutationCount = Math.Max(rand.Next() % Math.Max((int)(mutationFactor * count), 3), 1);
             //TODO code both multiple and single mutation
             for (int mutation = 0; mutation < mutationCount; mutation++)
             {

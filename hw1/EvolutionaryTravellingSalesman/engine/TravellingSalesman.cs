@@ -17,6 +17,7 @@ namespace EvolutionaryTravellingSalesman
         private City[] m_path = null;
 
         public static Config config = null;
+        public static int cityCount = -1;
         #endregion
 
         public static int evaluations = 0;
@@ -32,19 +33,21 @@ namespace EvolutionaryTravellingSalesman
                     .Select(city => new Tuple<City, float>(city, (float)(m_rand.NextDouble() % 1)))));
             m_path = ToPath(priorities);
             CalculateCost();
+            cityCount = cities.Count();
         }
 
         public TravellingSalesman(IEnumerable<Tuple<City, float>> initPriorities)
         {
             if (config == null)
                 throw new System.Exception("Travelling Salesman not configured");
+            Debug.Assert(initPriorities.Count() == cityCount);
             priorities = new LinkedList<Tuple<City, float>>(NormalizePriorities(initPriorities));
             m_rand = new Random();
             UpdatePriorities(priorities);
 
         }
 
-        public IEnumerable<Tuple<City, float>> NormalizePriorities(IEnumerable<Tuple<City, float>> unnormalizedPriorities)
+        public static IEnumerable<Tuple<City, float>> NormalizePriorities(IEnumerable<Tuple<City, float>> unnormalizedPriorities)
         {
             // Normalize all priorities s.t. this city is has highest priority
             var cityWithPriority = unnormalizedPriorities.First(pair => pair.Item1.id == 0);

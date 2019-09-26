@@ -111,6 +111,7 @@ namespace EvolutionaryTravellingSalesman
 
                 await Evolve();
                 RecordStats();
+                OnLog?.Invoke();
                 if (currentGeneration % saveOutputFrequency == 0) SaveStats();
 #if ETA
                 if (currentGeneration % 5 == 0)
@@ -173,7 +174,6 @@ namespace EvolutionaryTravellingSalesman
             if (currentGeneration == config.Get(Config.Int.GenerationCount) - 1 ||
             currentGeneration % config.Get(Config.Int.LogFrequency) == 0)
             {
-                OnLog?.Invoke();
                 m_outputStrings[Data.BestSalesMan] += "Generation " + currentGeneration + "\n";
                 m_outputStrings[Data.BestSalesMan] += bestSalesMan.PrintPath() + "\n";
                 m_outputStrings[Data.WorstSalesMan] += "Generation " + currentGeneration + "\n";

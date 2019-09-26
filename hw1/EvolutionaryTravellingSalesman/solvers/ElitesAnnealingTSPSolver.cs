@@ -48,12 +48,10 @@ namespace EvolutionaryTravellingSalesman
                     Reproducer = new AsexualSwapReproducer(populationCount);
                     break;
             }
-#if DEBUG
             OnLog += () =>
             {
                 Console.WriteLine("mutationFactor:{0} | temperature:{1} | populationCount {2}", mutationFactor, temperature, populationCount);
             };
-#endif
         }
 
         public override async Task Evolve()

@@ -1,7 +1,10 @@
 InputFilePath:inputs/tsp.txt
 Solver:ElitesAnnealingTSPSolver
+Reproducer:MultipleInheritanceReproducer
 GenerationCount:100
-PopulationCount:50
-Temperature:0.7
-TemperatureDecay:0.9
+PopulationCount:10
+LogFrequency:10
+ElitistPercentage:0.1
+Temperature:0.8
+TemperatureDecay:0.99
 Optimize:True

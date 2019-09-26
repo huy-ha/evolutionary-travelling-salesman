@@ -36,6 +36,7 @@ namespace EvolutionaryTravellingSalesman
                     Debug.Assert(parents.Count() == 2);
                     var firstParentPriorities = parents.ElementAt(0).priorities.OrderBy(pair => pair.Item1.id);
                     var secondParentPriorities = parents.ElementAt(1).priorities.OrderBy(pair => pair.Item1.id);
+                    System.Diagnostics.Debug.Assert(secondParentPriorities.Count() == firstParentPriorities.Count());
                     // Perform cross over
                     int citiesCount = firstParentPriorities.Count();
                     int crossOverIdx1 = threadRand.Next() % citiesCount;
@@ -54,8 +55,9 @@ namespace EvolutionaryTravellingSalesman
                     //Mutation
                     float childFitness = -1;
                     LinkedList<Tuple<TravellingSalesman.City, float>> childPriorityList;
-                    (childPriorityList, childFitness) = PrioritiesMutator.MutatePriorities(childPriority, mutationFactor, T);
+                    (childPriorityList, childFitness) = PrioritiesSingleMutator.MutatePriorities(childPriority, mutationFactor, T);
                     // Streamline mutation so less evaluations
+                    System.Diagnostics.Debug.Assert(childPriorityList.Count() == firstParentPriorities.Count());
                     return new TravellingSalesman(childPriorityList);
                 }));
             }

@@ -40,7 +40,7 @@ namespace EvolutionaryTravellingSalesman
         {
             if (config == null)
                 throw new System.Exception("Travelling Salesman not configured");
-            Debug.Assert(initPriorities.Count() == cityCount);
+            System.Diagnostics.Debug.Assert(initPriorities.Count() == cityCount);
             priorities = new LinkedList<Tuple<City, float>>(NormalizePriorities(initPriorities));
             m_rand = new Random();
             UpdatePriorities(priorities);

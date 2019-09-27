@@ -1,0 +1,12 @@
+Cities File: tsp.txt
+FindShortestPath: True
+Generation Count: 100000
+
+Population Count: 300
+Elitist Percentage: 0.05
+
+Initial Mutation Factor: 0.4
+Mutation Factor Decay: 1
+
+Init T: 0.6
+T Decay: 0.9999

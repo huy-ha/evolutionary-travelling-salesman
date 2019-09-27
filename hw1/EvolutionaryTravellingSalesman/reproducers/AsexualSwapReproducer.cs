@@ -25,27 +25,18 @@ namespace EvolutionaryTravellingSalesman
                 {
                     //sample a parent
                     Random rand = new Random();
-                    var parent = reproducingPopulation.ElementAt(rand.Next() % reproducingPopulationCount);
-                    float childFitness = -1;
-                    LinkedList<Tuple<TravellingSalesman.City, float>> childPriorities;
-                    (childPriorities, childFitness) = SingleSwapMutator.MutatePriorities( //2. Mutate parent priorities with mutation factor and T
-                                                            parent.priorities, // 1. Get random parent
-                                                             mutationFactor, T);
-                    for (int attempt = 0; attempt < 10; attempt++)
+                    var parentGenotype = reproducingPopulation.ElementAt(rand.Next() % reproducingPopulationCount).genotype;
+                    string genotypeRepresentation = TravellingSalesman.config.Get(Config.String.Genotype);
+                    switch (genotypeRepresentation)
                     {
-                        if (childFitness < parent.Fitness() || ((rand.NextDouble() % 1) >= T && attempt > 0))
-                        {
-                            System.Diagnostics.Debug.Assert(childPriorities.Count() == parent.priorities.Count());
-                            return new TravellingSalesman(childPriorities);
-                        }
-                        (childPriorities, childFitness) = SingleSwapMutator.MutatePriorities( //2. Mutate parent priorities with mutation factor and T
-                                                            parent.priorities, // 1. Get random parent
-                                                             mutationFactor, T);
+                        case "List":
+                            var childGenotype = SingleSwapMutator.Mutate(parentGenotype as ListGenotype, mutationFactor, T);
+                            System.Diagnostics.Debug.Assert(childGenotype.Path.Count() == (parentGenotype as ListGenotype).Path.Count());
+                            return new TravellingSalesman(childGenotype);
+                        default:
+                        case "Priority":
+                            throw new Exception("Expected List Genotype");
                     }
-                    System.Diagnostics.Debug.Assert(childPriorities.Count() == parent.priorities.Count());
-                    // Give up after 10 attempts
-                    return new TravellingSalesman(childPriorities);
-                    // try new offspring
                 }));
             }
 

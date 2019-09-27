@@ -6,20 +6,14 @@ namespace EvolutionaryTravellingSalesman
 {
     public static class MultiSwapMutator
     {
-        public static void Mutate(TravellingSalesman salesman, float mutationFactor, float T)
+        public static ListGenotype Mutate(ListGenotype genotype, float mutationFactor, float T)
         {
-            salesman.priorities = MutatePriorities(salesman.priorities, mutationFactor, T);
-            salesman.UpdatePriorities(salesman.priorities);
-        }
-
-        public static LinkedList<Tuple<TravellingSalesman.City, float>> MutatePriorities(LinkedList<Tuple<TravellingSalesman.City, float>> priorities, float mutationFactor, float T)
-        {
-            int count = priorities.Count();
+            int count = genotype.Path.Count();
             Random rand = new Random();
-            float oldFitness = TravellingSalesman.Fitness(TravellingSalesman.CalculateCost(priorities));
-            var mutatedPriorities = new LinkedList<Tuple<TravellingSalesman.City, float>>(priorities);
-            int mutationCount = rand.Next() % (int)(mutationFactor * count);
-            //TODO code both multiple and single mutation
+            float oldFitness = TravellingSalesman.CalculateFitness(genotype);
+            var testPath = new List<City>(genotype.Path);
+            int mutationCount = Math.Max(rand.Next() % Math.Max((int)(mutationFactor * count), 3), 1);
+
             for (int mutation = 0; mutation < mutationCount; mutation++)
             {
                 int idx1 = rand.Next() % count;
@@ -29,27 +23,21 @@ namespace EvolutionaryTravellingSalesman
                     idx1 = rand.Next() % count;
                     idx2 = rand.Next() % count;
                 }
-                var node1 = mutatedPriorities.Find(mutatedPriorities.ElementAt(idx1));
-                var node2 = mutatedPriorities.Find(mutatedPriorities.ElementAt(idx2));
-                var val1 = node1.Value;
-                var val2 = node2.Value;
-                node1.Value = new Tuple<TravellingSalesman.City, float>(val1.Item1, val2.Item2);
-                node2.Value = new Tuple<TravellingSalesman.City, float>(val2.Item1, val1.Item2);
-                float newFitness = TravellingSalesman.Fitness(TravellingSalesman.CalculateCost(mutatedPriorities));
-                if (newFitness > oldFitness || (rand.NextDouble() % 1) < T)
-                {
-                    // keep mutation
-                    priorities = mutatedPriorities;
-                    oldFitness = newFitness;
-                }
-                else
-                {
-                    //swap back
-                    mutatedPriorities = priorities;
-                }
+                var tmp = testPath[idx1];
+                testPath[idx1] = testPath[idx2];
+                testPath[idx2] = tmp;
             }
-            return mutatedPriorities;
+            float newFitness = TravellingSalesman.CalculateFitness(testPath.ToArray());
+            if (newFitness > oldFitness || (rand.NextDouble() % 1) < T)
+            {
+                // keep mutation
+                return new ListGenotype(testPath);
+            }
+            else
+            {
+                //swap back
+                return genotype;
+            }
         }
     }
-
 }

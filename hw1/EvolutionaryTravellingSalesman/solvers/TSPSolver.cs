@@ -38,7 +38,7 @@ namespace EvolutionaryTravellingSalesman
         private Dictionary<Data, List<float>> m_floatData = new Dictionary<Data, List<float>>();
         private Dictionary<Data, List<int>> m_intData = new Dictionary<Data, List<int>>();
         private Dictionary<Data, string> m_outputStrings = new Dictionary<Data, string>();
-        protected IEnumerable<TravellingSalesman.City> cities;
+        protected IEnumerable<City> cities;
         #endregion
 
         #region Configuration 
@@ -79,7 +79,7 @@ namespace EvolutionaryTravellingSalesman
                                             var coors = line.Split("\t", 2);
                                             var x = float.Parse(coors[0]);
                                             var y = float.Parse(coors[1]);
-                                            return new TravellingSalesman.City(x, y);
+                                            return new City(x, y);
                                         });
             //Initialize population
             population = new LinkedList<TravellingSalesman>();
@@ -107,11 +107,9 @@ namespace EvolutionaryTravellingSalesman
                 generationStopWatch.Reset();
                 generationStopWatch.Start();
 #endif
-                // Console.WriteLine("Generation {0} | Last Best: {1} (Generation {2})", currentGeneration, lastBestSalesmanCost, lastBestSalesmanGeneration);
 
                 await Evolve();
                 RecordStats();
-                // OnLog?.Invoke();
                 if (currentGeneration % saveOutputFrequency == 0) SaveStats();
 #if ETA
                 if (currentGeneration % 5 == 0)
@@ -167,8 +165,8 @@ namespace EvolutionaryTravellingSalesman
                 lastBestSalesmanGeneration = currentGeneration;
                 lastBestSalesmanFitness = bestSalesMan.Fitness();
                 lastBestSalesmanCost = bestSalesMan.Cost;
-
                 Console.WriteLine("Best Cost: {0} | Generation: {1} | {2}", lastBestSalesmanCost, lastBestSalesmanGeneration, System.DateTime.Now);
+                OnLog?.Invoke();
             }
 #if DEBUG
             Console.WriteLine("Average: " + averageCost + ", Max: " + worstSalesMan.Cost + ", Min: " + bestSalesMan.Cost);

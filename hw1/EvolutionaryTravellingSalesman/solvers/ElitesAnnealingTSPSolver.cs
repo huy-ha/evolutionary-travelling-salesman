@@ -41,10 +41,12 @@ namespace EvolutionaryTravellingSalesman
             switch (config.Get(Config.String.Reproducer))
             {
                 case "MultipleInheritanceReproducer":
+                    Debug.Assert(config.Get(Config.String.Genotype) == "Priority");
                     Reproducer = new MultipleInheritanceReproducer(populationCount);
                     break;
                 case "AsexualSwapReproducer":
                 default:
+                    Debug.Assert(config.Get(Config.String.Genotype) == "List");
                     Reproducer = new AsexualSwapReproducer(populationCount);
                     break;
             }

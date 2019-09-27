@@ -11,7 +11,8 @@ namespace EvolutionaryTravellingSalesman
             InputFilePath,
             Solver,
             Selector,
-            Reproducer
+            Reproducer,
+            Genotype
         };
         public enum Float
         {
@@ -42,6 +43,7 @@ namespace EvolutionaryTravellingSalesman
             m_strings.Add(String.Solver, "TSPSolver");
             m_strings.Add(String.Selector, "TruncateSelector");
             m_strings.Add(String.Reproducer, "AsexualSwapReproducer");
+            m_strings.Add(String.Genotype, "List");
 
             m_bools.Add(Bool.Optimize, true);
 

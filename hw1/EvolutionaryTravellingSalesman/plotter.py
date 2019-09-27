@@ -1,7 +1,8 @@
 import matplotlib.pyplot as plt
 import re
+import os
+import sys
 # TODO plot error bars
-# TODO plot log of data
 
 
 def read_file(filename):
@@ -10,41 +11,70 @@ def read_file(filename):
 
 def read_path(filename, generation):
     file = open(filename, "r")
+    last_line = None
+    curr_generation = -1
     while True:
-        curr = int(re.findall('\d+', file.readline())[0])
-        if curr >= generation:
+        try:
+            curr_generation = int(re.findall('\d+', file.readline())[0])
+        except:
             break
-    cities = [city.split(' ') for city in file.readline().split('|')]
+        last_line = file.readline()
+        if generation is not -1 and curr_generation >= generation:
+            break
+    file.close()
+    cities = [city.split(' ') for city in last_line.split('|')]
     x = []
     y = []
     for city in cities:
         x.append(float(city[0]))
         y.append(float(city[1]))
-    return x, y
+    return x, y, curr_generation
 
 
-def plot_costs():
-    maxCosts = read_file("output/MaxCosts.txt")
-    minCosts = read_file("output/MinCosts.txt")
-    avgCosts = read_file("output/AvgCosts.txt")
+def plot_costs(output_dir):
+    maxCosts = read_file("{}/MaxCosts.txt".format(output_dir))
+    minCosts = read_file("{}/MinCosts.txt".format(output_dir))
+    avgCosts = read_file("{}/AvgCosts.txt".format(output_dir))
+    evaluations = read_file(
+        "{}/Evaluations.txt".format(output_dir))
 
-    plt.plot(maxCosts, label="Max Costs")
-    plt.plot(minCosts, label="Min Costs")
-    plt.plot(avgCosts, label="Average Costs")
+    plt.plot(evaluations, maxCosts, label="Max Costs",)
+    plt.plot(evaluations, minCosts,  label="Min Costs")
+    plt.plot(evaluations, avgCosts,  label="Average Costs")
     plt.legend()
     plt.title("Genetic Travelling Salesman")
     plt.ylabel('Costs')
-    plt.xlabel('Generation')
+    plt.xlabel('Evalutions')
     plt.show()
 
 
-def plot_path(generation=0):
-    x, y = read_path("output/BestSalesMan.txt", generation)
+def plot_path(output_dir, generation=-1):
+    x, y, actual_generation = read_path(
+        "{}/BestSalesMan.txt".format(output_dir), generation)
     plt.plot(x, y)
-    plt.title("Genetic Travelling Salesman Path, generation {}".format(generation))
+    plt.title("Genetic Travelling Salesman Path, generation {}".format(
+        actual_generation))
     plt.show()
 
 
 if __name__ == "__main__":
-    plot_costs()
-    plot_path(generation=49999)
+    if(len(sys.argv) > 1):
+        try:
+            runNumber = int(sys.argv[1])
+        except:
+            print("Usage: python {} <run_number>".format(sys.argv[0]))
+            exit()
+        runs = [runs for runs in os.listdir(
+            'output') if os.path.isdir(os.path.join('output', runs))]
+        rundir = None
+        try:
+            rundir = "output/{}".format(next(run for run in runs if run.find(
+                "run{}".format(sys.argv[1])) is not -1))
+        except:
+            print("Run {} not found!".format(sys.argv[1]))
+            exit()
+        plot_costs(rundir)
+        plot_path(rundir)
+    else:
+        print("Usage: python {} <run_number>".format(sys.argv[0]))
+        exit()

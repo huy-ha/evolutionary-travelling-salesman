@@ -1,6 +1,5 @@
 InputFilePath:inputs/tsp.txt
 Solver:ElitesAnnealingTSPSolver
-Reproducer:MultipleInheritanceReproducer
 GenerationCount:500000
 LogFrequency: 5000
 PopulationCount:100

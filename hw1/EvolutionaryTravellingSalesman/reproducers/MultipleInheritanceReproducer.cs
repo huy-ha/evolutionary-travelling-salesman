@@ -8,33 +8,71 @@ namespace EvolutionaryTravellingSalesman
 {
     public class MultipleInheritanceReproducer : Reproducer<TravellingSalesman>
     {
-        int m_numParents;
-        int m_populationCount;
+        int m_populationCount = -1;
+        string mutatorConfig;
+        Config config;
 
         public MultipleInheritanceReproducer(int populationCount)
         {
             m_populationCount = populationCount;
+            config = TravellingSalesman.config;
+            mutatorConfig = config.Get(Config.String.Mutator);
         }
 
         public async Task<IEnumerable<TravellingSalesman>> Reproduce(IEnumerable<TravellingSalesman> reproducingPopulation, float mutationFactor, float T)
         {
-            List<Task<IEnumerable<TravellingSalesman>>> offsprings = new List<Task<IEnumerable<TravellingSalesman>>>();
             int reproducingPopulationCount = reproducingPopulation.Count();
-            while (offsprings.Count() / 2 < m_populationCount)
+            Random rand = new Random();
+            if (config.Get(Config.String.Genotype) == "List")
             {
-                offsprings.Add(Task.Run(() =>
+                List<Task<TravellingSalesman>> offsprings = new List<Task<TravellingSalesman>>();
+                while (offsprings.Count() < m_populationCount)
                 {
-                    Random rand = new Random(offsprings.Count());
-                    var g1 = reproducingPopulation.ElementAt(rand.Next() % reproducingPopulationCount).genotype;
-                    var g2 = reproducingPopulation.ElementAt(rand.Next() % reproducingPopulationCount).genotype;
-                    // Only one of the options
-                    return PriorityCrossOver.CrossOver(g1 as PriorityGenotype, g2 as PriorityGenotype) //1. Cross over parents genotypes
-                    .Select(childGenotype => new TravellingSalesman( //3. create travelling salesman phenotypes from genotypes
-                        PrioritySingleMutator.Mutate(childGenotype, mutationFactor, T))); //2. Mutate the offspring genotypes
-                }));
+                    int idx1 = rand.Next() % reproducingPopulationCount;
+                    int idx2 = rand.Next() % reproducingPopulationCount;
+                    double mutationChance = rand.NextDouble() % 1;
+                    offsprings.Add(Task.Run(() =>
+                    {
+                        var g1 = reproducingPopulation.ElementAt(idx1).genotype;
+                        var g2 = reproducingPopulation.ElementAt(idx2).genotype;
+                        // Cross Over
+                        var childGenotype = g1;
+                        //Mutate
+                        switch (mutatorConfig)
+                        {
+                            case "SingleSwap":
+                                return new TravellingSalesman(
+                                    SingleSwapMutator.Mutate(childGenotype as ListGenotype, mutationFactor, T));
+                            case "Insert":
+                                return new TravellingSalesman(
+                                    InsertMutator.Mutate(childGenotype as ListGenotype, mutationFactor, T));
+                            default:
+                                throw new Exception("Invalid Mutator");
+                        }
+                    }));
+                }
+                return await Task.WhenAll(offsprings);
             }
-            var siblingsGroups = await Task.WhenAll(offsprings);
-            return siblingsGroups.Aggregate(new List<TravellingSalesman>().AsEnumerable(), (allOffsprings, siblings) => allOffsprings.Concat(siblings));
+            else
+            {
+                List<Task<IEnumerable<TravellingSalesman>>> offsprings = new List<Task<IEnumerable<TravellingSalesman>>>();
+                while (offsprings.Count() / 2 < m_populationCount)
+                {
+                    int idx1 = rand.Next() % reproducingPopulationCount;
+                    int idx2 = rand.Next() % reproducingPopulationCount;
+                    offsprings.Add(Task.Run(() =>
+                    {
+                        var g1 = reproducingPopulation.ElementAt(idx1).genotype;
+                        var g2 = reproducingPopulation.ElementAt(idx2).genotype;
+                        // Only one of the options
+                        return PriorityCrossOver.CrossOver(g1 as PriorityGenotype, g2 as PriorityGenotype) //1. Cross over parents genotypes
+                            .Select(childGenotype => new TravellingSalesman( //3. create travelling salesman phenotypes from genotypes
+                                PrioritySingleMutator.Mutate(childGenotype, mutationFactor, T))); //2. Mutate the offspring genotypes
+                    }));
+                }
+                var siblingsGroups = await Task.WhenAll(offsprings);
+                return siblingsGroups.Aggregate(new List<TravellingSalesman>().AsEnumerable(), (allOffsprings, siblings) => allOffsprings.Concat(siblings));
+            }
         }
     }
 }

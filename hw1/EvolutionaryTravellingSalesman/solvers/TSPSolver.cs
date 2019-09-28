@@ -28,10 +28,6 @@ namespace EvolutionaryTravellingSalesman
 
 
         protected Config config;
-        // Keeps track of how long last N generations took
-#if ETA
-        Queue<TimeSpan> generationTimeSpan = new Queue<TimeSpan>(10);
-#endif
         protected LinkedList<TravellingSalesman> population;
         int currentGeneration = -1;
         public enum Data { MinCost, AverageCost, MaxCost, Evaluations, BestSalesMan, WorstSalesMan };
@@ -98,40 +94,12 @@ namespace EvolutionaryTravellingSalesman
             epochStopWatch.Start();
             int generationCount = config.Get(Config.Int.GenerationCount);
             int saveOutputFrequency = config.Get(Config.Int.OutputSaveFrequency);
-#if ETA
-            Stopwatch generationStopWatch = new Stopwatch();
-#endif
             for (currentGeneration = 0; currentGeneration < generationCount; currentGeneration++)
             {
-#if ETA
-                generationStopWatch.Reset();
-                generationStopWatch.Start();
-#endif
 
                 await Evolve();
                 RecordStats();
                 if (currentGeneration % saveOutputFrequency == 0) SaveStats();
-#if ETA
-                if (currentGeneration % 5 == 0)
-                {
-                    TimeSpan averageSecondsPerGeneration = new TimeSpan(generationTimeSpan.Aggregate((ts1, ts2) =>
-                    {
-                        return ts1.Add(ts2);
-                    }).Ticks / generationTimeSpan.Count());
-                    Console.WriteLine(
-                        currentGeneration +
-                        "|" +
-                        averageSecondsPerGeneration +
-                        "|"
-                        + averageSecondsPerGeneration * (generationCount - currentGeneration));
-                }
-                generationStopWatch.Stop();
-                generationTimeSpan.Enqueue(generationStopWatch.Elapsed);
-                if (generationTimeSpan.Count() > 10)
-                {
-                    generationTimeSpan.Dequeue();
-                }
-#endif
             }
             epochStopWatch.Stop();
             var ts = epochStopWatch.Elapsed;
@@ -168,11 +136,8 @@ namespace EvolutionaryTravellingSalesman
                 Console.WriteLine("Best Cost: {0} | Generation: {1} | {2}", lastBestSalesmanCost, lastBestSalesmanGeneration, System.DateTime.Now);
                 OnLog?.Invoke();
             }
-#if DEBUG
-            Console.WriteLine("Average: " + averageCost + ", Max: " + worstSalesMan.Cost + ", Min: " + bestSalesMan.Cost);
-#endif
             if (currentGeneration == config.Get(Config.Int.GenerationCount) - 1 ||
-            currentGeneration % config.Get(Config.Int.LogFrequency) == 0)
+            currentGeneration % config.Get(Config.Int.PathSaveFrequency) == 0)
             {
                 m_outputStrings[Data.BestSalesMan] += "Generation " + currentGeneration + "\n";
                 m_outputStrings[Data.BestSalesMan] += bestSalesMan.PrintPath() + "\n";

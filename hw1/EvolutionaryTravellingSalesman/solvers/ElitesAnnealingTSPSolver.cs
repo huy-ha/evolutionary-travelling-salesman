@@ -33,22 +33,25 @@ namespace EvolutionaryTravellingSalesman
             switch (config.Get(Config.String.Selector))
             {
                 case "TruncateSelector":
-                default:
+
                     Selector = new TruncateSelector<TravellingSalesman>(reproductionPercentage);
                     break;
+                default:
+                    throw new Exception("Invalid Selector");
             }
             //configure reproducer
             switch (config.Get(Config.String.Reproducer))
             {
-                case "MultipleInheritanceReproducer":
+                case "MultipleInheritance":
                     Debug.Assert(config.Get(Config.String.Genotype) == "Priority");
                     Reproducer = new MultipleInheritanceReproducer(populationCount);
                     break;
-                case "AsexualSwapReproducer":
-                default:
+                case "Asexual":
                     Debug.Assert(config.Get(Config.String.Genotype) == "List");
-                    Reproducer = new AsexualSwapReproducer(populationCount);
+                    Reproducer = new AsexualReproducer(populationCount);
                     break;
+                default:
+                    throw new Exception("Invalid Reproducer type");
             }
             OnLog += () =>
             {
@@ -60,21 +63,11 @@ namespace EvolutionaryTravellingSalesman
         {
             //select
             var parents = Selector.Select(population);
-#if DEBUG
-            float parentsAvgDist = parents.Average(salesman => salesman.Cost);
-            float parentsMaxDist = parents.Max(salesman => salesman.Cost);
-            float parentsMinDist = parents.Min(salesman => salesman.Cost);
-            Console.WriteLine("Average Parent: " + parentsAvgDist + ", Max: " + parentsMaxDist + ", Min: " + parentsMinDist);
-#endif
-            //mutate
+            //reproduce (cross-over and mutate)
             var offsprings = await Reproducer.Reproduce(parents, mutationFactor, temperature);
-#if DEBUG
-            Console.WriteLine("Got {0} offsprings", offsprings.Count());
-#endif
+            //pick out elites
             var elites = population.OrderByDescending(salesman => salesman.Fitness()).Take((int)(elitistPercentage * populationCount));
-#if DEBUG
-            Console.WriteLine("Got {0} elites with average cost of {1}", elites.Count(), elites.Average(elite => elite.Cost));
-#endif
+            //create new generation from elites and offsprings, but take the only the best ones
             population = new LinkedList<TravellingSalesman>(offsprings.Concat(elites).OrderByDescending(salesman => salesman.Fitness()).Take(populationCount));
             mutationFactor *= mutationFactorDecay;
             temperature *= temperatureDecay;

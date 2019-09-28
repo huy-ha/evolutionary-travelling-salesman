@@ -12,8 +12,43 @@ namespace EvolutionaryTravellingSalesman
             int count = genotype.Path.Count();
             Random rand = new Random();
             float oldFitness = TravellingSalesman.CalculateFitness(genotype);
+            var outputPath = new List<City>(genotype.Path);
+            if (TravellingSalesman.config.Get(Config.String.Reproducer) == "Asexual")
+            {
+                // Because in asexual reproduction, mutation is only variation
+                int mutationCount = Math.Max(rand.Next() % Math.Max((int)(mutationFactor * count), 3), 1);
+                for (int i = 0; i < mutationCount; i++)
+                {
+                    var testPath = InsertMutate(outputPath, rand, count);
+                    float newFitness = TravellingSalesman.CalculateFitness(testPath.ToArray());
+                    if (newFitness > oldFitness || (rand.NextDouble() % 1) < T)
+                    {
+                        //take new mutation
+                        outputPath = new List<City>(testPath);
+                        oldFitness = newFitness;
+                    }
+                }
+            }
+            else
+            {
+                if ((rand.NextDouble() % 1) < mutationFactor)
+                {
+                    var testPath = InsertMutate(outputPath, rand, count);
+                    float newFitness = TravellingSalesman.CalculateFitness(testPath.ToArray());
+                    if (newFitness > oldFitness || (rand.NextDouble() % 1) < T)
+                    {
+                        //take new mutation
+                        outputPath = new List<City>(testPath);
+                        oldFitness = newFitness;
+                    }
+                }
+            }
+            return new ListGenotype(outputPath);
+        }
+
+        private static List<City> InsertMutate(List<City> input, Random rand, int count)
+        {
             var testPath = new List<City>();
-            int mutationCount = Math.Max(rand.Next() % Math.Max((int)(mutationFactor * count), 3), 1);
             int[] randomNums = { rand.Next() % count, rand.Next() % count, rand.Next() % count };
             while (randomNums.Distinct().Count() != randomNums.Length)
             {
@@ -28,15 +63,15 @@ namespace EvolutionaryTravellingSalesman
                 idx1 = randomNums[1];
                 idx2 = randomNums[2];
                 for (int i = 0; i < insertIdx; i++)
-                    testPath.Add(genotype.Path[i]);
+                    testPath.Add(input[i]);
                 for (int i = idx1; i < idx2; i++)
-                    testPath.Add(genotype.Path[i]);
+                    testPath.Add(input[i]);
                 for (int i = insertIdx; i < idx1; i++)
-                    testPath.Add(genotype.Path[i]);
-                for (int i = idx2; i < genotype.Path.Count(); i++)
-                    testPath.Add(genotype.Path[i]);
-                Debug.Assert(testPath.Count() == genotype.Path.Count());
-                Debug.Assert(testPath.Distinct().Count() == genotype.Path.Count());
+                    testPath.Add(input[i]);
+                for (int i = idx2; i < input.Count(); i++)
+                    testPath.Add(input[i]);
+                Debug.Assert(testPath.Count() == input.Count());
+                Debug.Assert(testPath.Distinct().Count() == input.Count());
             }
             else
             {
@@ -44,28 +79,17 @@ namespace EvolutionaryTravellingSalesman
                 idx2 = randomNums[1];
                 insertIdx = randomNums[2];
                 for (int i = 0; i < idx1; i++)
-                    testPath.Add(genotype.Path[i]);
+                    testPath.Add(input[i]);
                 for (int i = idx2; i < insertIdx; i++)
-                    testPath.Add(genotype.Path[i]);
+                    testPath.Add(input[i]);
                 for (int i = idx1; i < idx2; i++)
-                    testPath.Add(genotype.Path[i]);
-                for (int i = insertIdx; i < genotype.Path.Count(); i++)
-                    testPath.Add(genotype.Path[i]);
-                Debug.Assert(testPath.Count() == genotype.Path.Count());
-                Debug.Assert(testPath.Distinct().Count() == genotype.Path.Count());
+                    testPath.Add(input[i]);
+                for (int i = insertIdx; i < input.Count(); i++)
+                    testPath.Add(input[i]);
+                Debug.Assert(testPath.Count() == input.Count());
+                Debug.Assert(testPath.Distinct().Count() == input.Count());
             }
-
-            float newFitness = TravellingSalesman.CalculateFitness(testPath.ToArray());
-            if (newFitness > oldFitness || (rand.NextDouble() % 1) < T)
-            {
-                // keep mutation
-                return new ListGenotype(testPath);
-            }
-            else
-            {
-                //swap back
-                return genotype;
-            }
+            return testPath;
         }
     }
 }

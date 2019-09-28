@@ -36,9 +36,11 @@ namespace EvolutionaryTravellingSalesman
                             switch (mutatorConfig)
                             {
                                 case "SingleSwap":
-                                    var childGenotype = SingleSwapMutator.Mutate(parentGenotype as ListGenotype, mutationFactor, T);
-                                    System.Diagnostics.Debug.Assert(childGenotype.Path.Count() == (parentGenotype as ListGenotype).Path.Count());
-                                    return new TravellingSalesman(childGenotype);
+                                    return new TravellingSalesman(
+                                        SingleSwapMutator.Mutate(parentGenotype as ListGenotype, mutationFactor, T));
+                                case "Insert":
+                                    return new TravellingSalesman(
+                                        InsertMutator.Mutate(parentGenotype as ListGenotype, mutationFactor, T));
                                 default:
                                     throw new Exception("Invalid Mutator");
                             }

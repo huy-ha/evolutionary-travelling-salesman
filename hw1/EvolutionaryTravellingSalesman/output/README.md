@@ -86,7 +86,7 @@ namespace EvolutionaryTravellingSalesman
             float T_decay = 0.9999f;
 
             int logCount = 50;
-            int logFrequency = generationCount / logCount;
+            int PathSaveFrequency = generationCount / logCount;
 
             // Timer for optimization purposes
             selector.Reset();
@@ -153,7 +153,7 @@ namespace EvolutionaryTravellingSalesman
                 Console.WriteLine("Population:" + population.Count + ", MutationFactor:" + mutationFactor);
 #endif
                 if (mutationFactor == 0) break;
-                if (generation % logFrequency == 0 || generation == generationCount - 1)
+                if (generation % PathSaveFrequency == 0 || generation == generationCount - 1)
                 {
                     Console.WriteLine("Saving Generation " + generation);
                     bestSalesmanOutput += "Generation " + generation + "\n";

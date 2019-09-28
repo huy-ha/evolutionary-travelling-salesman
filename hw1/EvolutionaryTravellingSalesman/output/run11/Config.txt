@@ -8,7 +8,7 @@ Optimize:True
 
 GenerationCount:10000
 PopulationCount:300
-LogFrequency:10
+PathSaveFrequency:10
 OutputSaveFrequency:10
 
 ElitistPercentage:0.1

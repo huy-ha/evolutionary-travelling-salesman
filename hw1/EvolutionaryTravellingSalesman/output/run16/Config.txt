@@ -2,13 +2,13 @@ InputFilePath:inputs/tsp.txt
 
 Solver:ElitesAnnealingTSPSolver
 Selector:TruncateSelector
-Reproducer:AsexualSwapReproducer
+Reproducer:AsexualReproducer
 
 Optimize:True
 
 GenerationCount:500000
 PopulationCount:50
-LogFrequency:1000
+PathSaveFrequency:1000
 OutputSaveFrequency:100
 
 ElitistPercentage:0.02

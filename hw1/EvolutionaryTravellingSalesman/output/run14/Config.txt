@@ -2,13 +2,13 @@ InputFilePath:inputs/circle100.txt
 
 Solver:ElitesAnnealingTSPSolver
 Selector:TruncateSelector
-Reproducer:AsexualSwapReproducer
+Reproducer:AsexualReproducer
 
 Optimize:True
 
 GenerationCount:1000000
 PopulationCount:200
-LogFrequency:300
+PathSaveFrequency:300
 OutputSaveFrequency:10
 
 ElitistPercentage:0.1

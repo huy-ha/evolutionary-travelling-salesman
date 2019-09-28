@@ -10,7 +10,6 @@ namespace EvolutionaryTravellingSalesman
     {
         int m_numParents;
         int m_populationCount;
-        System.Random m_rand;
 
         public MultipleInheritanceReproducer(int populationCount)
         {

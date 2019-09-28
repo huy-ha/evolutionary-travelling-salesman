@@ -12,7 +12,8 @@ namespace EvolutionaryTravellingSalesman
             Solver,
             Selector,
             Reproducer,
-            Genotype
+            Genotype,
+            Mutator
         };
         public enum Float
         {
@@ -28,7 +29,7 @@ namespace EvolutionaryTravellingSalesman
         {
             PopulationCount,
             GenerationCount,
-            LogFrequency,
+            PathSaveFrequency,
             OutputSaveFrequency
         };
         private Dictionary<Float, float> m_floats = new Dictionary<Float, float>();
@@ -42,14 +43,15 @@ namespace EvolutionaryTravellingSalesman
             m_strings.Add(String.InputFilePath, "inputs/tsp.txt");
             m_strings.Add(String.Solver, "TSPSolver");
             m_strings.Add(String.Selector, "TruncateSelector");
-            m_strings.Add(String.Reproducer, "AsexualSwapReproducer");
+            m_strings.Add(String.Reproducer, "Asexual");
+            m_strings.Add(String.Mutator, "SingleSwap");
             m_strings.Add(String.Genotype, "List");
 
             m_bools.Add(Bool.Optimize, true);
 
             m_ints.Add(Int.GenerationCount, 100000);
             m_ints.Add(Int.PopulationCount, 100);
-            m_ints.Add(Int.LogFrequency, 100);
+            m_ints.Add(Int.PathSaveFrequency, 100);
             m_ints.Add(Int.OutputSaveFrequency, 10);
 
             m_floats.Add(Float.ElitistPercentage, 0.02f);

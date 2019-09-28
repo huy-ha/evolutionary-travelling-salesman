@@ -35,9 +35,10 @@ namespace EvolutionaryTravellingSalesman
                     genotype = new PriorityGenotype(cities);
                     break;
                 case "List":
-                default:
                     genotype = new ListGenotype(cities);
                     break;
+                default:
+                    throw new Exception("Invalid Genotype Represention");
             }
             m_path = genotype.ToPath();
             CalculateCost();

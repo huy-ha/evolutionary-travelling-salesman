@@ -1,0 +1,13 @@
+InputFilePath:inputs/tsp.txt
+Solver:ElitesAnnealingTSPSolver
+Reproducer:Asexual
+Mutator:SingleSwap
+GenerationCount:100000
+PathSaveFrequency: 1000
+PopulationCount:100
+ElitistPercentage:0.02
+InitMutationFactor:0.05
+MutationFactorDecay:0.9999
+Temperature:0.5
+TemperatureDecay:0.9999
+Optimize:True

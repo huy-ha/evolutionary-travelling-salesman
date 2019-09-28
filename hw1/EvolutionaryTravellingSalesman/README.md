@@ -1,29 +1,96 @@
 # Travelling Salesman Problem using Genetic Algorithms
 
-| Evolutionary Computation and Automated Design (MECS E4510) | Hod Lipson |
-| ---------------------------------------------------------- | ---------- |
+## Evolutionary Computation and Automated Design (MECS E4510) with professor Hod Lipson
 
+Name: Huy Ha
 
-| Name: Huy Ha | UNI: hqh2101 | Date Submitted: September 29th 2019 | No Grace Hour Used (96 hours left) |
-| ------------ | ------------ | ----------------------------------- | ---------------------------------- |
+UNI: hqh2101
 
+Date Submitted: September 29th 2019
 
-## Results
+No Grace Hour Used (96 hours left)
 
-|   Run # | Approach Name                                | Shortest Path | Longest Path | Notes |
-| ------: | :------------------------------------------- | ------------: | -----------: | :---- |
-|      11 | Multiple Inheritance (Normalized Priorities) |           N/a |          N/a | N/a   |
-| 18 & 19 | Asexual, Swap, No Annealing                  |      74.63085 |          N/a |       |
+---
 
-As can be seen from the table above, my most sucessful implementation was run #TODO named TODO. The plot of the path can be seen below
+# Grading Helper:
+
+## General
+
+1.  [Cover page](<#Travelling Salesman Problem using Genetic Algorithms>)
+2.  [Summary result table showing all information requested](<#Summary Results Table>)
+3.  Dot plot for any one of the methods (not all required)
+4.  Convergence plot for any one of some methods (not all)
+5.  Code included (8pt courier single spacing)
+6.  Theoretical shortest path using Christofides' algorithm
+7.  Movie of optimizing path (one frame every time path improves)
+8.  learning curves clearly labeled, have error bars, labeled axes
+9.  Shortest path Overall performance (based on distance, evaluations)
+10. Longest path Overall performance (based on distance, evaluations)
 
 ## Methods
 
-In run #11, I tried using the `MultipleInheritanceReproducer` again, this time, assuring that the city priorities are normalized (the intuition was that if the entire population had the same starting points, then crossing over priorities would be more meaningful). This allowed me to achieve the exponential decay that I wanted (see graph below). This run used the ElitesAnnealingTSPSolver, and you can see clearly in the graph how the worst TSPs were approaching the average TSP of the population as T decayed. Moving forward from here, I think I want to explore running this for more generations, but with a smaller population (for speed concerns). In order to battle with the lower of diversity due to a decrease in population count, I will allow the temperature to decay more slowly.
+1. [Description of Representation Used](#Representations)
+2. [Description of Random Search](<#Random Search>)
+3. `Description of Hill Climber`
+4. `Description of EA variation and selection methods used`
+5. `Analysis of Performance (What worked and what didn't)`
+6. `Two methods compared (bar chart)`
 
-TODO: Insert image from run 11
+## Performance Curves
 
-In run #14, I tried running my algorithm on the circle test ussing the AsexualReproducer, which takes one parent, performs one or more swaps on the priorities. This method converged too quickly, and this was when I realized I needed some diversity operators.
+1. [Shortest Path Learning Curve of random search](<#Shortest Path Learning Curve of Random Search>)
+2. `Shortest Path Learning Curve of hill climber`
+3. `Shortest Path Learning Curve of EA and some variation of EA`
+4. [Longest Path Learning Curve of random search](<#Longest Path Learning Curve of Random Search>)
+5. `Longest Path Learning Curve of hill climber`
+6. `Longest Path Learning Curve of EA and some variation of EA`
+
+## Results
+
+#### Summary Results Table
+
+| Run # | Reproduction  | Mutation    | Annealing      | Population | Genotype | Optimize | Longest Path |
+| ----: | :------------ | :---------- | :------------- | ---------: | -------: | -------: | ------------ |
+|    18 | Asexual       | Single Swap | No             |        100 |     List | Shortest | 74.63085     |
+|    19 | Asexual       | Single Swap | No             |        100 |     List |  Longest | 760.8126     |
+|    20 | Asexual       | Single Swap | Yes (init 0.5) |        100 |     List | Shortest | 74.58129     |
+|    21 | Asexual       | Insert      | Yes (init 0.5) |         50 |     List | Shortest | 47.86598     |
+|    22 | Asexual       | Insert      | Yes (init 0.5) |        100 |     List | Shortest | 41.14663     |
+|    23 | Asexual       | Insert      | Yes (init 0.5) |        200 |     List | Shortest | 36.29556     |
+|    24 | Random Search |             |                |        100 |     List | Shortest | TODO         |
+|    25 | Random Search |             |                |        100 |     List |  Longest | TODO         |
+
+As can be seen from the table above, my most sucessful implementation was run #TODO named TODO. The plot of the paths can be seen below.
+
+## Methods
+
+### Random Search
+
+In `RandomSearchTSPSolver.cs`, I've implemented a random search travelling saleman problem solver that uniformly samples the solution space, and keeps track of the best solution it has found so far. In other words, I'm creating a random path for every single individual in the population in every single generation, evaluting the fitness, then, if the individual has the highest fitness in the population, I allow the individual to survive to the next generation (the `elite`).
+
+#### Shortest Path Learning Curve of Random Search
+
+TODO
+
+#### Longest Path Learning Curve of Random Search
+
+TODO
+
+### Representations and their corresponding Crossover and Mutation Operators
+
+In my assignment I tried two different genotype representations, with their corresponding crossover and mutation operators, which I will describe below:
+
+1.  `PriorityGenotype`: Every single city has a normalized float associated with it, and the path the TSP will take is a priority queue on the list of tuple of city and its corresponding priority.
+
+    - `PriorityCrossover`: this crossover operator does a Two Point crossover on the two parent's priorities creating the child's priority. Since the priority lists are ordered by the city's id, there is no invalid priority list (duplicate or missing cities) to resolve, therefore, no invalid path to resolve.
+    - `PrioritySingleMutator`: this mutator operator adds some random noise to the priority of one city, then clamps it between 0 and 1.
+    - `PriorityMutator`: does the same thing the `PrioritySingleMutator` does but to a variable number of cities, depending on the mutation factor.
+
+2.  `ListGenotype`: the genotype is just an ordered list of the cities, and the path is exactly the genotype.
+    - `SingleSwapMutator`: This mutator operator performs a single swap between two random cities.
+    - `MultiSwapMutator`: same as `SingleSwapMutator`, but performs a variable number of swaps based on the mutation factor.
+    - `InsertMutator`: chooses a random sequence of cities, removes the sequence from the path, then inserts it somewhere else in the path.
+    - `Crossover`: TODO
 
 ## Performance Plots
 

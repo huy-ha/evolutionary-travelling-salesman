@@ -43,7 +43,6 @@ namespace EvolutionaryTravellingSalesman
             switch (config.Get(Config.String.Reproducer))
             {
                 case "MultipleInheritance":
-                    Debug.Assert(config.Get(Config.String.Genotype) == "Priority");
                     Reproducer = new MultipleInheritanceReproducer(populationCount);
                     break;
                 case "Asexual":

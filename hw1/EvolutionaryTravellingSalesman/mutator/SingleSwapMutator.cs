@@ -14,7 +14,6 @@ namespace EvolutionaryTravellingSalesman
             var outputPath = new List<City>(genotype.Path);
             var testPath = new List<City>(genotype.Path);
             int mutationCount = Math.Max(rand.Next() % Math.Max((int)(mutationFactor * count), 3), 1);
-
             for (int mutation = 0; mutation < mutationCount; mutation++)
             {
                 int idx1 = rand.Next() % count;
@@ -29,10 +28,18 @@ namespace EvolutionaryTravellingSalesman
                 testPath[idx2] = tmp;
 
                 float newFitness = TravellingSalesman.CalculateFitness(testPath.ToArray());
-                if (newFitness > oldFitness || (rand.NextDouble() % 1) < T)
+
+                if (newFitness > oldFitness)
                 {
                     // keep mutation
                     outputPath = testPath;
+                    testPath = new List<City>(outputPath);
+                    oldFitness = newFitness;
+                }
+                else if ((rand.NextDouble() % 1) < T)
+                {
+                    outputPath = testPath;
+                    testPath = new List<City>(outputPath);
                     oldFitness = newFitness;
                 }
                 else

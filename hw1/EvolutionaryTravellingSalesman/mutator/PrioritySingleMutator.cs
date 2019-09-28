@@ -24,9 +24,6 @@ namespace EvolutionaryTravellingSalesman
                 MathF.Max(
                     priority + ((float)(rand.NextDouble() % 1) - 0.5f) * 0.2f * mutationMagnitude, 0), 1);
             node.Value = new Tuple<City, float>(city, newPriority);
-#if DEBUG
-            Console.WriteLine("mutated city #{0} from {1} to {2}", city.id, priority, newPriority);
-#endif
             float newFitness = TravellingSalesman.CalculateFitness(mutatedGenotype);
             if (newFitness > oldFitness || (rand.NextDouble() % 1) < T)
             {

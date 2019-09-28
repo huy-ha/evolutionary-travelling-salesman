@@ -57,8 +57,8 @@ No Grace Hour Used (96 hours left)
 |    21 | Asexual       | Insert      | Yes (init 0.5) |         50 |     List | Shortest | 47.86598     |
 |    22 | Asexual       | Insert      | Yes (init 0.5) |        100 |     List | Shortest | 41.14663     |
 |    23 | Asexual       | Insert      | Yes (init 0.5) |        200 |     List | Shortest | 36.29556     |
-|    24 | Random Search |             |                |        100 |     List | Shortest | TODO         |
-|    25 | Random Search |             |                |        100 |     List |  Longest | TODO         |
+|    24 | Random Search |             |                |        100 |     List |  Longest | 555.0189     |
+|    25 | Random Search |             |                |        100 |     List | Shortest | 483.8219     |
 
 As can be seen from the table above, my most sucessful implementation was run #TODO named TODO. The plot of the paths can be seen below.
 

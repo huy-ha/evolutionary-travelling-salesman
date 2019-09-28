@@ -31,8 +31,10 @@ namespace EvolutionaryTravellingSalesman
                 case "ElitesAnnealingTSPSolver":
                     solver = new ElitesAnnealingTSPSolver(config);
                     break;
+                case "RandomTSPSolver":
+                    solver = new RandomSearchTSPSolver(config);
+                    break;
                 case "TSPSolver":
-
                     solver = new TSPSolver(config);
                     break;
                 default:

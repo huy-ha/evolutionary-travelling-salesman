@@ -2,7 +2,9 @@ import matplotlib.pyplot as plt
 import re
 import os
 import sys
+
 # TODO plot error bars
+# TODO collect information for dot plot
 
 
 def read_file(filename):
@@ -31,16 +33,18 @@ def read_path(filename, generation):
     return x, y, curr_generation
 
 
-def plot_costs(output_dir):
-    maxCosts = read_file("{}/MaxCosts.txt".format(output_dir))
-    minCosts = read_file("{}/MinCosts.txt".format(output_dir))
-    avgCosts = read_file("{}/AvgCosts.txt".format(output_dir))
-    evaluations = read_file(
-        "{}/Evaluations.txt".format(output_dir))
+def plot_costs(output_dir, plotmaxcost=False, plotmincost=True, plotavgcost=False):
+    evaluations = read_file("{}/Evaluations.txt".format(output_dir))
+    if plotmaxcost:
+        maxCosts = read_file("{}/MaxCosts.txt".format(output_dir))
+        plt.plot(evaluations, maxCosts, label="Max Costs",)
+    if plotmincost:
+        minCosts = read_file("{}/MinCosts.txt".format(output_dir))
+        plt.plot(evaluations, minCosts,  label="Min Costs")
+    if plotavgcost:
+        avgCosts = read_file("{}/AvgCosts.txt".format(output_dir))
+        plt.plot(evaluations, avgCosts,  label="Average Costs")
 
-    plt.plot(evaluations, maxCosts, label="Max Costs",)
-    plt.plot(evaluations, minCosts,  label="Min Costs")
-    plt.plot(evaluations, avgCosts,  label="Average Costs")
     plt.legend()
     plt.title("Genetic Travelling Salesman")
     plt.ylabel('Costs')
@@ -64,17 +68,21 @@ if __name__ == "__main__":
         except:
             print("Usage: python {} <run_number>".format(sys.argv[0]))
             exit()
-        runs = [runs for runs in os.listdir(
-            'output') if os.path.isdir(os.path.join('output', runs))]
-        rundir = None
-        try:
-            rundir = "output/{}".format(next(run for run in runs if run.find(
-                "run{}".format(sys.argv[1])) is not -1))
-        except:
-            print("Run {} not found!".format(sys.argv[1]))
-            exit()
-        plot_costs(rundir)
-        plot_path(rundir)
+        if runNumber is 0:
+            plot_costs('output')
+            plot_path('output')
+        else:
+            runs = [runs for runs in os.listdir(
+                'output') if os.path.isdir(os.path.join('output', runs))]
+            rundir = None
+            try:
+                rundir = "output/{}".format(next(run for run in runs if run.find(
+                    "run{}".format(sys.argv[1])) is not -1))
+            except:
+                print("Run {} not found!".format(sys.argv[1]))
+                exit()
+            plot_costs(rundir)
+            plot_path(rundir)
     else:
         print("Usage: python {} <run_number>".format(sys.argv[0]))
         exit()

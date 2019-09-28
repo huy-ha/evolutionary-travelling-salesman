@@ -32,9 +32,11 @@ namespace EvolutionaryTravellingSalesman
                     solver = new ElitesAnnealingTSPSolver(config);
                     break;
                 case "TSPSolver":
-                default:
+
                     solver = new TSPSolver(config);
                     break;
+                default:
+                    throw new System.Exception("Invalid Solver Type");
             }
             await solver.Run();
         }

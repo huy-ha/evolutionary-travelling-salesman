@@ -19,6 +19,11 @@ namespace EvolutionaryTravellingSalesman
                 .Select(obj => obj.City)); //get just the city
         }
 
+        public ListGenotype(List<City> Path)
+        {
+            this.Path = Path;
+        }
+
         public City[] ToPath()
         {
             return Path.ToArray();

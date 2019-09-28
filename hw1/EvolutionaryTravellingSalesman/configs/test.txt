@@ -3,7 +3,7 @@ Solver:ElitesAnnealingTSPSolver
 Reproducer:MultipleInheritanceReproducer
 GenerationCount:100
 PopulationCount:10
-LogFrequency:10
+PathSaveFrequency:10
 ElitistPercentage:0.1
 Temperature:0.8
 TemperatureDecay:0.99

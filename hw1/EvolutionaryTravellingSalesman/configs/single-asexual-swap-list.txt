@@ -1,10 +1,10 @@
-InputFilePath:inputs/circle100.txt
+InputFilePath:inputs/tsp.txt
 Solver:ElitesAnnealingTSPSolver
 Reproducer:Asexual
-Mutator:Insert
+Mutator:SingleSwap
 GenerationCount:100000
 PathSaveFrequency: 1000
-PopulationCount:50
+PopulationCount:300
 ElitistPercentage:0.02
 InitMutationFactor:0.05
 MutationFactorDecay:0.9999

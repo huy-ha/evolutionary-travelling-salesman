@@ -1,8 +1,8 @@
 InputFilePath:inputs/circle100.txt
 Solver:ElitesAnnealingTSPSolver
-Reproducer:AsexualSwapReproducer
+Reproducer:AsexualReproducer
 GenerationCount:100000
-LogFrequency: 100
+PathSaveFrequency: 100
 PopulationCount:50
 OutputSaveFrequency:100
 ElitistPercentage:0.02

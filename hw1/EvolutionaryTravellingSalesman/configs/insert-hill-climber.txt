@@ -10,4 +10,5 @@ InitMutationFactor:1
 MutationFactorDecay:1
 Temperature:0
 TemperatureDecay:1
+ReproductionPercentage:1
 Optimize:True

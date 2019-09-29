@@ -18,14 +18,14 @@ No Grace Hour Used (96 hours left)
 
 1.  [Cover page](<#Travelling Salesman Problem using Genetic Algorithms>)
 2.  [Summary result table showing all information requested](<#Summary Results Table>)
-3.  Dot plot for any one of the methods (not all required)
-4.  Convergence plot for any one of some methods (not all)
-5.  Code included (8pt courier single spacing)
-6.  Theoretical shortest path using Christofides' algorithm
-7.  Movie of optimizing path (one frame every time path improves)
-8.  learning curves clearly labeled, have error bars, labeled axes
-9.  Shortest path Overall performance (based on distance, evaluations)
-10. Longest path Overall performance (based on distance, evaluations)
+3.  `Dot plot for any one of the methods (not all required)`
+4.  `Convergence plot for any one of some methods (not all)`
+5.  `Code included (8pt courier single spacing)`
+6.  `Theoretical shortest path using Christofides' algorithm`
+7.  `Movie of optimizing path (one frame every time path improves)`
+8.  `learning curves clearly labeled, have error bars, labeled axes`
+9.  `Shortest path Overall performance (based on distance, evaluations)`
+10. `Longest path Overall performance (based on distance, evaluations)`
 
 ## Methods
 
@@ -70,11 +70,11 @@ In `RandomSearchTSPSolver.cs`, I've implemented a random search travelling salem
 
 #### Shortest Path Learning Curve of Random Search
 
-TODO
+![alt text](output\run25-random-shortest\Cost.png "Shortest Path Learning Curve of Random Search")
 
 #### Longest Path Learning Curve of Random Search
 
-TODO
+![alt text](output\run24-random-longest\Cost.png "Longest Path Learning Curve of Random Search")
 
 ### Representations and their corresponding Crossover and Mutation Operators
 

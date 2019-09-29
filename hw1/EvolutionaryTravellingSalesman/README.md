@@ -38,10 +38,10 @@ No Grace Hour Used (96 hours left)
 
 ## Performance Curves
 
-1. [Shortest Path Learning Curve of random search](<#Shortest Path Learning Curve of Random Search>)
+1. [Shortest Path Learning Curve of random search](<#Shortest Path (left) and Longest Path (right) Learning Curve of Random Search>)
 2. `Shortest Path Learning Curve of hill climber`
 3. `Shortest Path Learning Curve of EA and some variation of EA`
-4. [Longest Path Learning Curve of random search](<#Longest Path Learning Curve of Random Search>)
+4. [Longest Path Learning Curve of random search](<#Shortest Path (left) and Longest Path (right)
 5. `Longest Path Learning Curve of hill climber`
 6. `Longest Path Learning Curve of EA and some variation of EA`
 
@@ -68,13 +68,38 @@ As can be seen from the table above, my most sucessful implementation was run #T
 
 In `RandomSearchTSPSolver.cs`, I've implemented a random search travelling saleman problem solver that uniformly samples the solution space, and keeps track of the best solution it has found so far. In other words, I'm creating a random path for every single individual in the population in every single generation, evaluting the fitness, then, if the individual has the highest fitness in the population, I allow the individual to survive to the next generation (the `elite`).
 
-#### Shortest Path Learning Curve of Random Search
+#### Shortest Path (left) and Longest Path (right) Learning Curve of Random Search
 
-![alt text](output\run25-random-shortest\Cost.png "Shortest Path Learning Curve of Random Search")
+<div style="clear:both;">
+<img src="output\run25-random-shortest\Cost.png" alt="Shortest Path Learning Curve of Random Search"
+	title="Shortest Path Learning Curve of Random Search" width="45%" height="auto" />
+<img src="output\run24-random-longest\Cost.png" alt="Longest Path Learning Curve of Random Search"
+	title="Longest Path Learning Curve of Random Search" width="45%" height="auto" />
+</div>
 
-#### Longest Path Learning Curve of Random Search
+### Hill Climber
 
-![alt text](output\run24-random-longest\Cost.png "Longest Path Learning Curve of Random Search")
+A Hill climber is just a genetic algorithm with population 1, simulated annealing with initial temperature set to 0, with a 100% reproduction rate (the individual in the previous "generation" is always the starting point for creating the new individual in the next population), with an asexual reproduction operator (no crossing over). Since my implementation of the GA was general enough, I was able to just define a configuration of the GA as a hill climber, with the configurations as described above. The only degree of freedom left was the mutation operator, which I experimented with the insert mutator and swap mutator (described more detailedly below in my EA section).
+
+`TODO insert hill climber plots`
+
+#### Shortest Path (left) and Longest Path (right) Learning Curve of Insert Hill Climber
+
+<div style="clear:both;">
+<img src="output\run25-random-shortest\Cost.png" alt="Shortest Path Learning Curve of Random Search"
+	title="Shortest Path Learning Curve of Random Search" width="45%" height="auto" />
+<img src="output\run24-random-longest\Cost.png" alt="Longest Path Learning Curve of Random Search"
+	title="Longest Path Learning Curve of Random Search" width="45%" height="auto" />
+</div>
+
+#### Shortest Path (left) and Longest Path (right) Learning Curve of Swap Hill Climber
+
+<div style="clear:both;">
+<img src="output\run25-random-shortest\Cost.png" alt="Shortest Path Learning Curve of Random Search"
+	title="Shortest Path Learning Curve of Random Search" width="45%" height="auto" />
+<img src="output\run24-random-longest\Cost.png" alt="Longest Path Learning Curve of Random Search"
+	title="Longest Path Learning Curve of Random Search" width="45%" height="auto" />
+</div>
 
 ### Representations and their corresponding Crossover and Mutation Operators
 

@@ -1,0 +1,14 @@
+InputFilePath:inputs/tsp.txt
+Solver:ElitesAnnealingTSPSolver
+Reproducer:MultipleInheritance
+Mutator:Insert
+Genotype:List
+GenerationCount:100000
+PathSaveFrequency: 1000
+PopulationCount:100
+ElitistPercentage:0.02
+InitMutationFactor:0.05
+MutationFactorDecay:1
+Temperature:0.5
+TemperatureDecay:0.9999
+Optimize:True

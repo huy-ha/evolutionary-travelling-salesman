@@ -38,7 +38,7 @@ No Grace Hour Used (96 hours left)
 
 ## Performance Curves
 
-1. [Shortest Path Learning Curve of random search](<#Shortest Path Learning Curve of Random Search>)
+1. [Shortest Path Learning Curve of random search](<#Shortest Path Learning Curve of Random Search>) `TODO: error bars`
 2. `Shortest Path Learning Curve of hill climber`
 3. `Shortest Path Learning Curve of EA and some variation of EA`
 4. [Longest Path Learning Curve of random search](<#Longest Path Learning Curve of Random Search>)
@@ -50,7 +50,7 @@ No Grace Hour Used (96 hours left)
 #### Summary Results Table
 
 | Run # | Reproduction  | Mutation    | Annealing      | Population | Genotype | Optimize | Longest Path |
-| ----: | :------------ | :---------- | :------------- | ---------: | -------: | -------: | ------------ |
+| ----: | :------------ | :---------- | :------------- | ---------: | -------: | -------: | :----------- |
 |    18 | Asexual       | Single Swap | No             |        100 |     List | Shortest | 74.63085     |
 |    19 | Asexual       | Single Swap | No             |        100 |     List |  Longest | 760.8126     |
 |    20 | Asexual       | Single Swap | Yes (init 0.5) |        100 |     List | Shortest | 74.58129     |
@@ -59,6 +59,10 @@ No Grace Hour Used (96 hours left)
 |    23 | Asexual       | Insert      | Yes (init 0.5) |        200 |     List | Shortest | 36.29556     |
 |    24 | Random Search |             |                |        100 |     List |  Longest | 555.0189     |
 |    25 | Random Search |             |                |        100 |     List | Shortest | 483.8219     |
+|    26 | Hill Climber  | Insert      |                |          1 |     List | Shortest | 30.68847     |
+|    27 | Hill Climber  | Insert      |                |          1 |     List |  Longest | 762.99493    |
+|    28 | Hill Climber  | Single Swap |                |          1 |     List | Shortest | 78.05326     |
+|    29 | Hill Climber  | Single Swap |                |          1 |     List |  Longest | 760.7559     |
 
 As can be seen from the table above, my most sucessful implementation was run #TODO named TODO. The plot of the paths can be seen below.
 

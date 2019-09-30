@@ -10,6 +10,7 @@ namespace EvolutionaryTravellingSalesman
     {
         int m_populationCount = -1;
         string mutatorConfig;
+        string crossoverConfig;
         Config config;
 
         public MultipleInheritanceReproducer(int populationCount)
@@ -17,6 +18,7 @@ namespace EvolutionaryTravellingSalesman
             m_populationCount = populationCount;
             config = TravellingSalesman.config;
             mutatorConfig = config.Get(Config.String.Mutator);
+            crossoverConfig = config.Get(Config.String.CrossOver);
         }
 
         public async Task<IEnumerable<TravellingSalesman>> Reproduce(IEnumerable<TravellingSalesman> reproducingPopulation, float mutationFactor, float T)
@@ -35,8 +37,17 @@ namespace EvolutionaryTravellingSalesman
                     {
                         var g1 = reproducingPopulation.ElementAt(idx1).genotype;
                         var g2 = reproducingPopulation.ElementAt(idx2).genotype;
+                        ListGenotype childGenotype;
                         // Cross Over
-                        var childGenotype = g1;
+                        switch (crossoverConfig)
+                        {
+                            case "Selection":
+                                childGenotype = SelectionCrossover.CrossOver(g1 as ListGenotype, g2 as ListGenotype);
+                                break;
+                            default:
+                                throw new Exception("Invalid CrossOver!");
+                        }
+
                         //Mutate
                         switch (mutatorConfig)
                         {
@@ -47,7 +58,7 @@ namespace EvolutionaryTravellingSalesman
                                 return new TravellingSalesman(
                                     InsertMutator.Mutate(childGenotype as ListGenotype, mutationFactor, T));
                             default:
-                                throw new Exception("Invalid Mutator");
+                                throw new Exception("Invalid Mutator!");
                         }
                     }));
                 }

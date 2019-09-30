@@ -1,29 +1,26 @@
 ﻿using System.Threading.Tasks;
+using System.IO;
 namespace EvolutionaryTravellingSalesman
 {
-    // TODO fix extremely quick convergence
-    // TODO exit and save data at any points
-    // TODO do circle cities test file
-    // TODO implement Dijkstra's to know limit
-    // TODO implement random search to know baseline
-    // TODO implement find shortest path by changing fitness calculation of TSP
-    // TODO config file
-    // TODO approximate time left
-    // TODO stopping condition when no improvement in half the time
-    // TODO Hierarchical tree based on spatial
-    // TODO How to do tight linkage??
-    // TODO How to do diversity????
-    // TODO change to how many evaluations rather than generations
-    // Plot path
-    // Try to minimize evaluations
     class Program
     {
+        public static string outputFolder = "output";
+
         static async Task Main(string[] args)
         {
-            string configFilePath = "config.txt";
+            string configFilePath = "config";
             if (args.Length > 0)
                 configFilePath = args[0];
-            var config = new Config(configFilePath);
+            if (args.Length > 1)
+            {
+                outputFolder = args[1];
+                if (!Directory.Exists(outputFolder))
+                {
+                    var dir = Directory.CreateDirectory("output/" + outputFolder);
+                    outputFolder = dir.FullName;
+                }
+            }
+            var config = new Config("configs/" + configFilePath + ".txt");
             System.Console.WriteLine(config);
             TSPSolver solver;
             switch (config.Get(Config.String.Solver))

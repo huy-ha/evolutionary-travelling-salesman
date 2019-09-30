@@ -102,6 +102,10 @@ Insert Hill Climber:
 Compare hill climbers:
  - Shortest: python plotter.py -c min -r 38 39 40 41 42 -r 26 30 31 32 33 -l swap-hill-climber insert-hill-climber -t Shortest_TSP_Solver -lg y
  - Longest: python plotter.py -c min -r 43 44 45 46 47 -r 27 34 35 36 37 -l swap-hill-climber insert-hill-climber -t Longest_TSP_Solver -lg y
+
+ Random Search: 
+ - Shortest: python plotter.py -c min -r 25 56 57 58 59 -l random-search -t Shortest_Random_Search
+ - Longest: python plotter.py -c min -r 24 52 53 54 55 -l random-search -t Longest_Random_Search
 """
 
 if __name__ == "__main__":
@@ -136,16 +140,16 @@ if __name__ == "__main__":
             evals[i] = [math.log(x) for x in evals[i]]
         if config == "max":
             plt.errorbar(evals[i], maxCost[i], yerr=maxCostErr[i],
-                         label=labels[i], color=colors[i], ecolor=colors[i])
+                         label=labels[i], color=colors[i], ecolor=colors[i], errorevery=1000)
         elif config == "min":
             plt.errorbar(evals[i], minCost[i], yerr=maxCostErr[i],
-                         label=labels[i], color=colors[i], ecolor=colors[i])
+                         label=labels[i], color=colors[i], ecolor=colors[i], errorevery=1000)
         elif config == "avg":
             plt.plot(evals[i], avgCost[i], label=labels[i])
     plt.legend()
     plt.title(title)
     plt.ylabel('Costs')
-    plt.xlabel('Log of Evaluations')
+    plt.xlabel('Evaluations')
     if args.xlimit is not None:
         plt.xlim(0, int(args.xlimit))
     plt.show()

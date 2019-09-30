@@ -3,10 +3,9 @@ import re
 import os
 import sys
 import argparse
-from math import log
+import math
 import numpy as np
 
-# TODO plot error bars
 # TODO collect information for dot plot
 
 
@@ -36,25 +35,6 @@ def read_path(filename, generation):
     return x, y, curr_generation
 
 
-def plot_costs(output_dir, plotmaxcost=False, plotmincost=True, plotavgcost=False):
-    evaluations = read_file("{}/Evaluations.txt".format(output_dir))
-    if plotmaxcost:
-        maxCosts = read_file("{}/MaxCosts.txt".format(output_dir))
-        plt.plot(evaluations, maxCosts, label="Max Costs",)
-    if plotmincost:
-        minCosts = read_file("{}/MinCosts.txt".format(output_dir))
-        plt.plot(evaluations, minCosts,  label="Min Costs")
-    if plotavgcost:
-        avgCosts = read_file("{}/AvgCosts.txt".format(output_dir))
-        plt.plot(evaluations, avgCosts,  label="Average Costs")
-
-    plt.legend()
-    plt.title("Genetic Travelling Salesman")
-    plt.ylabel('Costs')
-    plt.xlabel('Evalutions')
-    plt.show()
-
-
 def plot_path(output_dir, generation=-1):
     x, y, actual_generation = read_path(
         "{}/BestSalesMan.txt".format(output_dir), generation)
@@ -78,8 +58,11 @@ def get_dir_name(runNumber):
 def average_runs(runs):
     evals = []
     maxCosts = []
+    maxCostsErr = []
     minCosts = []
+    minCostsErr = []
     avgCosts = []
+
     for run in runs:
         runEvals = []
         runMaxCosts = []
@@ -92,11 +75,34 @@ def average_runs(runs):
             runMinCosts.append(read_file("{}/MinCosts.txt".format(dirname)))
             runAvgCosts.append(read_file("{}/AvgCosts.txt".format(dirname)))
         maxCosts.append(np.mean(runMaxCosts, axis=0))
+        maxCostsErr.append(
+            np.std(runMaxCosts, axis=0) / math.sqrt(len(i)))
         minCosts.append(np.mean(runMinCosts, axis=0))
+        minCostsErr.append(
+            np.std(runMinCosts, axis=0) / math.sqrt(len(i)))
         avgCosts.append(np.mean(runAvgCosts, axis=0))
         evals.append(np.mean(runEvals, axis=0))
-    return evals, maxCosts, minCosts, avgCosts
+    # print(len(maxCostsErr))
+    # print(len(maxCostsErr[0]))
+    # print(len(maxCostsErr[0][0]))
+    # exit()
+    return evals, maxCosts, minCosts, avgCosts, maxCostsErr, minCostsErr
 
+
+"""
+Report configs:
+Insert Hill Climber:
+ - Shortest: python plotter.py -c min -r 26 30 31 32 33 -l insert-hill-climber -t Shortest_Insert_Hill_Climber
+ - Longest: python plotter.py -c min -r 27 34 35 36 37 -l insert-hill-climber -t Longest_Insert_Hill_Climber
+
+ Swap Hill Climber:
+ - Shortest: python plotter.py -c min -r 38 39 40 41 42 -l swap-hill-climber -t Shortest_Swap_Hill_Climber
+ - Longest: python plotter.py -c min -r 43 44 45 46 47 -l swap-hill-climber -t Longest_Swap_Hill_Climber
+
+Compare hill climbers:
+ - Shortest: python plotter.py -c min -r 38 39 40 41 42 -r 26 30 31 32 33 -l swap-hill-climber insert-hill-climber -t Shortest_TSP_Solver -lg y
+ - Longest: python plotter.py -c min -r 43 44 45 46 47 -r 27 34 35 36 37 -l swap-hill-climber insert-hill-climber -t Longest_TSP_Solver -lg y
+"""
 
 if __name__ == "__main__":
     # example command: python plotter.py -c max -r 26 27 -r 28 29 -l swap insert
@@ -109,23 +115,37 @@ if __name__ == "__main__":
         '-c', '--config', help='max, min or avg', required=True)
     parser.add_argument(
         '-lg', '--log', help='log or naw (y/n)', required=False)
+    parser.add_argument(
+        '-t', '--title', help='title of output graph', required=False)
+    parser.add_argument(
+        '-xl', '--xlimit', help='truncate x axis', required=False)
+
     args = parser.parse_args()
     runs = args.runs
     labels = args.labels
     config = args.config
     logconfig = args.log
-    evals, maxCost, minCost, avgCost = average_runs(runs)
+    title = args.title
+    colors = ['red', 'lime', 'cyan', 'blue', 'yellow', 'orange']
+    if title is None:
+        title = "Genetic Travelling Salesman"
+    evals, maxCost, minCost, avgCost, maxCostErr, minCostErr = average_runs(
+        runs)
     for i in range(len(labels)):
         if logconfig is not None and logconfig == "y":
-            evals[i] = [log(x) for x in evals[i]]
+            evals[i] = [math.log(x) for x in evals[i]]
         if config == "max":
-            plt.plot(evals[i], maxCost[i], label=labels[i])
+            plt.errorbar(evals[i], maxCost[i], yerr=maxCostErr[i],
+                         label=labels[i], color=colors[i], ecolor=colors[i])
         elif config == "min":
-            plt.plot(evals[i], minCost[i], label=labels[i])
+            plt.errorbar(evals[i], minCost[i], yerr=maxCostErr[i],
+                         label=labels[i], color=colors[i], ecolor=colors[i])
         elif config == "avg":
             plt.plot(evals[i], avgCost[i], label=labels[i])
     plt.legend()
-    plt.title("Genetic Travelling Salesman")
+    plt.title(title)
     plt.ylabel('Costs')
-    plt.xlabel('Evalutions')
+    plt.xlabel('Log of Evaluations')
+    if args.xlimit is not None:
+        plt.xlim(0, int(args.xlimit))
     plt.show()

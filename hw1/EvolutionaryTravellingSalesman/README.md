@@ -26,32 +26,27 @@ Grace Hours left: 96 hours
 
 1.  [Cover page](<#Travelling Salesman Problem using Genetic Algorithms>)
 2.  [Results Summary table](<#Summary Results Table>)
-3.  `Dot plot for any one of the methods (not all required)`
+3.  [Dot plot for a population of Asexual Insert Hill Climbers](<#Dot Plot for a Population of Hill Climbers>)
 4.  [Convergence plot for any one of some methods (not all)](<#Shortest Path (left) and Longest Path (right) Learning Curve of Hill Climbers>)
-5.  `Code included (8pt courier single spacing)`
-6.  `Theoretical shortest path using Christofides' algorithm`
-7.  `Movie of optimizing path (one frame every time path improves)`
-8.  `learning curves clearly labeled, have error bars, labeled axes`
-9.  `Shortest path Overall performance (based on distance, evaluations)`
-10. `Longest path Overall performance (based on distance, evaluations)`
+5.  `Theoretical shortest path using Christofides' algorithm`
+6.  [Movie of optimizing path (one frame every time path improves)](<#Video Animation of Insert Hill Climber Solving for Shortest Path>)
+7.  `Shortest path Overall performance (based on distance, evaluations)`
+8.  `Longest path Overall performance (based on distance, evaluations)`
 
 ## Methods
 
 1. [Description of Representation Used](#Representations)
 2. [Description of Random Search](<#Random Search>)
 3. [Description of Hill Climber](<#Hill Climber>)
-4. `Description of EA variation and selection methods used`
-5. `Analysis of Performance (What worked and what didn't)`
+4. Description of [EA variation](<#Representations and their corresponding Crossover and Mutation Operators>) and [selection methods](#Selector) used
+5. [Analysis of Performance](<# 4. Analysis of Performance>)
 6. `Two methods compared (bar chart)`
 
 ## Performance Curves
 
-1. [Shortest Path Learning Curve of random search](<#Shortest Path (left) and Longest Path (right) Learning Curve of Random Search>) `TODO: error bars`
-2. `Shortest Path Learning Curve of hill climber`
-3. `Shortest Path Learning Curve of EA and some variation of EA`
-4. [Longest Path Learning Curve of random search](<#Shortest Path (left) and Longest Path (right)
-5. `Longest Path Learning Curve of hill climber`
-6. `Longest Path Learning Curve of EA and some variation of EA`
+1. [Learning Curve of Random Search(Shortest and Longest)](<#Shortest Path (left) and Longest Path (right) Learning Curve of Random Search>)
+2. [Learning Curve of Hill Climber (Shortest and Longest)](<# Shortest Path (left) and Longest Path (right) Learning Curve of Hill Climbers>)
+3. `Learning Curve of EA`
 
 # 2. Results
 
@@ -94,9 +89,9 @@ In `RandomSearchTSPSolver.cs`, I've implemented a random search travelling salem
 #### Shortest Path (left) and Longest Path (right) Learning Curve of Random Search
 
 <div style="clear:both;">
-<img src="output\run25-random-shortest\Cost.png" alt="Shortest Path Learning Curve of Random Search"
+<img src="output\assets\shortest-rs.png" alt="Shortest Path Learning Curve of Random Search"
 	title="Shortest Path Learning Curve of Random Search" width="45%" height="auto" />
-<img src="output\run24-random-longest\Cost.png" alt="Longest Path Learning Curve of Random Search"
+<img src="output\assets\longest-rs.png" alt="Longest Path Learning Curve of Random Search"
 	title="Longest Path Learning Curve of Random Search" width="45%" height="auto" />
 </div>
 
@@ -113,9 +108,29 @@ A Hill climber is just a genetic algorithm with population 1, simulated annealin
 	title="Longest Path Learning Curve of Hill Climbers" width="45%" height="auto" />
 </div>
 
+#### Video Animation of Insert Hill Climber Solving for Shortest Path
+
+<a href="https://drive.google.com/file/d/1o2MVIlHO2COeTcewPxxkhMqrY-ufpkky/view?usp=sharing">
+<img src="output\assets\animation-preview.png" alt="Preview of Insert Hill Climber animation"
+	title="Preview of Insert Hill Climber animation"/>
+</a>
+
+[Here is a video of the insert hill climber solving for the shortest path. (You can also click on the preview of the animation above)](https://drive.google.com/file/d/1o2MVIlHO2COeTcewPxxkhMqrY-ufpkky/view?usp=sharing)
+
+#### Dot Plot for a Population of Hill Climbers
+
+Because Hill Climbers were so successful, I wanted to explore what a population of hill climbers would do. This is exactly as described above, only, this time, there are 40 hill climbers, and each generation, they all mutate a bit to give the next generation's offspring. Below is a dot plot of that (on the left). As you can see, it just looks like a thick irregular line, so I've zoomed into a part of the plot so you can see the actual scatter points (on the right)
+
+<div style="clear:both;">
+<img src="output\assets\insert-hc-dotplot.png" alt="Dot Plot for a Population of Hill Climbers"
+	title="Dot Plot for a Population of Hill Climbers"  width="45%" height="auto" />
+<img src="output\assets\insert-hc-dotplot-zoomed.png" alt="Zoomed In Dot Plot for a Population of Hill Climbers"
+	title="Zoomed In Dot Plot for a Population of Hill Climbers"  width="45%" height="auto" />
+</div>
+
 ## 3.3 Evolutionary Algorithm
 
-### Representations and their corresponding Crossover and Mutation Operators
+### 3.3.1 Representations and their corresponding Crossover and Mutation Operators
 
 In my assignment I tried two different genotype representations, with their corresponding crossover and mutation operators, which I will describe below:
 
@@ -131,4 +146,32 @@ In my assignment I tried two different genotype representations, with their corr
     - `InsertMutator`: chooses a random sequence of cities, removes the sequence from the path, then inserts it somewhere else in the path.
     - `Crossover`: TODO
 
-# 4. Appendix
+### 3.3.2 Selector
+
+Earlier on in the development process, I experimented with Stochastic Universal Sampling, as described in the recommended textbook for the class "An Introduction to Genetic Algorithms", but it did not work as well, and I didn't see it as the limiting factor of my program. Therefore, I removed that part of the code, and just replaced it with a simple truncate selector, which selects the top X%, where X is a hyperparameter I called ReproductionFactor.
+
+# 4. Analysis of Performance
+
+## Swap Mutator v.s. Insert Mutator
+
+The biggest breakthough I had in terms of performance was when I implemented the `InsertMutator`. This mutator is much more suited for the problem than the SwapMutator was. I think the intuition is that grabbing a sequence of cities then chucking it somewhere else doesn't break the solution that previous generations has already came up with (This was the inspiration for my `SelectionCrossOver`).
+
+Another curious thing to note is that Insert did much better than Swap when it came to shortest path, but only did marginally better than Swap in longest path. I think this is because Swap breaks paths that are close together, so it is more suited for longest path than shortest path. However, the advantage of Insert is still that it preserves groups (sub-solutions) that are already optimum, and is able to explore without giving up those optimum sub-solutions.
+
+## Asexual v.s. Multiple Inheritance
+
+I think the reason why Asexual consistently outperforms Multiple Inheritance is not because in general it does, but because Mutliple Inheritance relies on have appropriate cross over operators, which I don't think I spent enough time exploring. If given more time, I would like to try a number of other cross over operators for ordered lists, and hopefully that might prove Multiple Inheritance to be superior.
+
+Another note is that my development cycle is biased. Because Asexual reproduction cycles are faster to run and get results, I'm able to go through many more development cycles with Asexual, therefore have more time exploring all the different mutators for Asexual and optimizing it.
+
+## Simulated Annealing vs Greedy
+
+Something I did not expect was for Simulated Annealing to not consistently outperform the greedy variations (just initializing the temperature to 0). I ran lots of tests on the circle test file I created, and to my surprise, most of the time, Greedy converges to a higher fitness. I could not come with an explantion to this. This does not make sense to me because I run the simulation for long enough to observe real convergence, and so any exploration should benefit the program.
+
+On the same note, I expected a larger population to maintain more diversity, therefore, converge to a higher fitness, but this was not the case. I ran tests on the circle city test file I created, and the fitness would consistently converge to a higher value for a population of 50 than for 100, and higher for 100 than for 200, and so on.
+
+These two points, I'm not able to explain why this is the case.
+
+# 5. Appendix
+
+As per the TA's approval on Piazza, the source code for this project has been zipped up with this README document.

@@ -1,6 +1,0 @@
-InputFilePath:inputs/tsp.txt
-Solver:RandomTSPSolver
-GenerationCount:100000
-PathSaveFrequency: 1000
-PopulationCount:100
-Optimize:True

@@ -28,11 +28,10 @@ Grace Hours left: 96 hours
 2.  [Results Summary table](<#Summary Results Table>)
 3.  [Dot plot for a population of Asexual Insert Hill Climbers](<#Dot Plot for a Population of Hill Climbers>)
 4.  [Convergence plot for any one of some methods (not all)](<#Shortest Path (left) and Longest Path (right) Learning Curve of Hill Climbers>)
-5.  `Code included (8pt courier single spacing)`
-6.  `Theoretical shortest path using Christofides' algorithm`
-7.  [Movie of optimizing path (one frame every time path improves)](<#Video Animation of Insert Hill Climber Solving for Shortest Path>)
-8.  `Shortest path Overall performance (based on distance, evaluations)`
-9.  `Longest path Overall performance (based on distance, evaluations)`
+5.  `Theoretical shortest path using Christofides' algorithm`
+6.  [Movie of optimizing path (one frame every time path improves)](<#Video Animation of Insert Hill Climber Solving for Shortest Path>)
+7.  `Shortest path Overall performance (based on distance, evaluations)`
+8.  `Longest path Overall performance (based on distance, evaluations)`
 
 ## Methods
 
@@ -45,12 +44,9 @@ Grace Hours left: 96 hours
 
 ## Performance Curves
 
-1. [Shortest Path Learning Curve of random search](<#Shortest Path (left) and Longest Path (right) Learning Curve of Random Search>) `TODO: error bars`
-2. `Shortest Path Learning Curve of hill climber`
-3. `Shortest Path Learning Curve of EA and some variation of EA`
-4. [Longest Path Learning Curve of random search](<#Shortest Path (left) and Longest Path (right)
-5. `Longest Path Learning Curve of hill climber`
-6. `Longest Path Learning Curve of EA and some variation of EA`
+1. [Learning Curve of Random Search(Shortest and Longest)](<#Shortest Path (left) and Longest Path (right) Learning Curve of Random Search>)
+2. [Learning Curve of Hill Climber (Shortest and Longest)](<# Shortest Path (left) and Longest Path (right) Learning Curve of Hill Climbers>)
+3. `Learning Curve of EA`
 
 # 2. Results
 
@@ -93,9 +89,9 @@ In `RandomSearchTSPSolver.cs`, I've implemented a random search travelling salem
 #### Shortest Path (left) and Longest Path (right) Learning Curve of Random Search
 
 <div style="clear:both;">
-<img src="output\run25-random-shortest\Cost.png" alt="Shortest Path Learning Curve of Random Search"
+<img src="output\assets\shortest-rs.png" alt="Shortest Path Learning Curve of Random Search"
 	title="Shortest Path Learning Curve of Random Search" width="45%" height="auto" />
-<img src="output\run24-random-longest\Cost.png" alt="Longest Path Learning Curve of Random Search"
+<img src="output\assets\longest-rs.png" alt="Longest Path Learning Curve of Random Search"
 	title="Longest Path Learning Curve of Random Search" width="45%" height="auto" />
 </div>
 

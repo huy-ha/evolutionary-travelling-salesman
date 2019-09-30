@@ -26,11 +26,11 @@ Grace Hours left: 96 hours
 
 1.  [Cover page](<#Travelling Salesman Problem using Genetic Algorithms>)
 2.  [Results Summary table](<#Summary Results Table>)
-3.  `Dot plot for any one of the methods (not all required)`
+3.  [Dot plot for a population of Asexual Insert Hill Climbers](<#Dot Plot for a Population of Hill Climbers>)
 4.  [Convergence plot for any one of some methods (not all)](<#Shortest Path (left) and Longest Path (right) Learning Curve of Hill Climbers>)
 5.  `Code included (8pt courier single spacing)`
 6.  `Theoretical shortest path using Christofides' algorithm`
-7.  `Movie of optimizing path (one frame every time path improves)`
+7.  [Movie of optimizing path (one frame every time path improves)](<#Video Animation of Insert Hill Climber Solving for Shortest Path>)
 8.  `learning curves clearly labeled, have error bars, labeled axes`
 9.  `Shortest path Overall performance (based on distance, evaluations)`
 10. `Longest path Overall performance (based on distance, evaluations)`
@@ -113,6 +113,26 @@ A Hill climber is just a genetic algorithm with population 1, simulated annealin
 	title="Longest Path Learning Curve of Hill Climbers" width="45%" height="auto" />
 </div>
 
+#### Video Animation of Insert Hill Climber Solving for Shortest Path
+
+<a href="https://drive.google.com/file/d/1o2MVIlHO2COeTcewPxxkhMqrY-ufpkky/view?usp=sharing">
+<img src="output\assets\animation-preview.png" alt="Preview of Insert Hill Climber animation"
+	title="Preview of Insert Hill Climber animation"/>
+</a>
+
+[Here is a video of the insert hill climber solving for the shortest path. (You can also click on the preview of the animation above)](https://drive.google.com/file/d/1o2MVIlHO2COeTcewPxxkhMqrY-ufpkky/view?usp=sharing)
+
+#### Dot Plot for a Population of Hill Climbers
+
+Because Hill Climbers were so successful, I wanted to explore what a population of hill climbers would do. This is exactly as described above, only, this time, there are 40 hill climbers, and each generation, they all mutate a bit to give the next generation's offspring. Below is a dot plot of that (on the left). As you can see, it just looks like a thick irregular line, so I've zoomed into a part of the plot so you can see the actual scatter points (on the right)
+
+<div style="clear:both;">
+<img src="output\assets\insert-hc-dotplot.png" alt="Dot Plot for a Population of Hill Climbers"
+	title="Dot Plot for a Population of Hill Climbers"  width="45%" height="auto" />
+<img src="output\assets\insert-hc-dotplot-zoomed.png" alt="Zoomed In Dot Plot for a Population of Hill Climbers"
+	title="Zoomed In Dot Plot for a Population of Hill Climbers"  width="45%" height="auto" />
+</div>
+
 ## 3.3 Evolutionary Algorithm
 
 ### Representations and their corresponding Crossover and Mutation Operators
@@ -132,3 +152,5 @@ In my assignment I tried two different genotype representations, with their corr
     - `Crossover`: TODO
 
 # 4. Appendix
+
+As per the TA's approval on Piazza, the source code for this project has been zipped up with this README document.

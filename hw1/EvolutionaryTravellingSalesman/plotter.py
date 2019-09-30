@@ -6,8 +6,6 @@ import argparse
 import math
 import numpy as np
 
-# TODO collect information for dot plot
-
 
 def read_file(filename):
     return [float(x) for x in open(filename, "r").readlines()]
@@ -35,12 +33,20 @@ def read_path(filename, generation):
     return x, y, curr_generation
 
 
-def plot_path(output_dir, generation=-1):
+def plot_path(args):
+    generation = -1
+    if args.generation is not None:
+        generation = args.generation
+    run = int(args.runs[0][0])
+    dir = get_dir_name(run)
     x, y, actual_generation = read_path(
-        "{}/BestSalesMan.txt".format(output_dir), generation)
+        "{}/BestSalesMan.txt".format(dir), generation)
     plt.plot(x, y)
-    plt.title("Genetic Travelling Salesman Path, generation {}".format(
-        actual_generation))
+    title = "Genetic Travelling Salesman Path, generation {}".format(
+        actual_generation)
+    if args.title is not None:
+        title = args.title
+    plt.title(title)
     plt.show()
 
 
@@ -82,52 +88,13 @@ def average_runs(runs):
             np.std(runMinCosts, axis=0) / math.sqrt(len(i)))
         avgCosts.append(np.mean(runAvgCosts, axis=0))
         evals.append(np.mean(runEvals, axis=0))
-    # print(len(maxCostsErr))
-    # print(len(maxCostsErr[0]))
-    # print(len(maxCostsErr[0][0]))
-    # exit()
     return evals, maxCosts, minCosts, avgCosts, maxCostsErr, minCostsErr
 
 
-"""
-Report configs:
-Insert Hill Climber:
- - Shortest: python plotter.py -c min -r 26 30 31 32 33 -l insert-hill-climber -t Shortest_Insert_Hill_Climber
- - Longest: python plotter.py -c min -r 27 34 35 36 37 -l insert-hill-climber -t Longest_Insert_Hill_Climber
-
- Swap Hill Climber:
- - Shortest: python plotter.py -c min -r 38 39 40 41 42 -l swap-hill-climber -t Shortest_Swap_Hill_Climber
- - Longest: python plotter.py -c min -r 43 44 45 46 47 -l swap-hill-climber -t Longest_Swap_Hill_Climber
-
-Compare hill climbers:
- - Shortest: python plotter.py -c min -r 38 39 40 41 42 -r 26 30 31 32 33 -l swap-hill-climber insert-hill-climber -t Shortest_TSP_Solver -lg y
- - Longest: python plotter.py -c min -r 43 44 45 46 47 -r 27 34 35 36 37 -l swap-hill-climber insert-hill-climber -t Longest_TSP_Solver -lg y
-
- Random Search: 
- - Shortest: python plotter.py -c min -r 25 56 57 58 59 -l random-search -t Shortest_Random_Search
- - Longest: python plotter.py -c min -r 24 52 53 54 55 -l random-search -t Longest_Random_Search
-"""
-
-if __name__ == "__main__":
-    # example command: python plotter.py -c max -r 26 27 -r 28 29 -l swap insert
-    parser = argparse.ArgumentParser(description='Plot a TSP run')
-    parser.add_argument('-r', '--runs', nargs='+', action='append',
-                        help='runs to average', required=False)
-    parser.add_argument('-l', '--labels', nargs='+',
-                        help='labels for each group of run', required=False)
-    parser.add_argument(
-        '-c', '--config', help='max, min or avg', required=True)
-    parser.add_argument(
-        '-lg', '--log', help='log or naw (y/n)', required=False)
-    parser.add_argument(
-        '-t', '--title', help='title of output graph', required=False)
-    parser.add_argument(
-        '-xl', '--xlimit', help='truncate x axis', required=False)
-
-    args = parser.parse_args()
+def plot_learning_curve(args):
     runs = args.runs
     labels = args.labels
-    config = args.config
+
     logconfig = args.log
     title = args.title
     colors = ['red', 'lime', 'cyan', 'blue', 'yellow', 'orange']
@@ -149,7 +116,64 @@ if __name__ == "__main__":
     plt.legend()
     plt.title(title)
     plt.ylabel('Costs')
-    plt.xlabel('Evaluations')
+    plt.xlabel('Log of Evaluations')
     if args.xlimit is not None:
         plt.xlim(0, int(args.xlimit))
     plt.show()
+
+
+if __name__ == "__main__":
+    # example command: python plotter.py -c max -r 26 27 -r 28 29 -l swap insert
+    parser = argparse.ArgumentParser(description='Plot a TSP run')
+    parser.add_argument('-r', '--runs', nargs='+', action='append',
+                        help='runs to average', required=False)
+    parser.add_argument('-l', '--labels', nargs='+',
+                        help='labels for each group of run', required=False)
+    parser.add_argument(
+        '-c', '--config', help='max, min or avg', required=True)
+    parser.add_argument(
+        '-lg', '--log', help='log or naw (y/n)', required=False)
+    parser.add_argument(
+        '-t', '--title', nargs='+', help='title of output graph', required=False)
+    parser.add_argument(
+        '-xl', '--xlimit', help='truncate x axis', required=False)
+
+    parser.add_argument(
+        '-g', '--generation', help='generation to plot path', required=False)
+
+    args = parser.parse_args()
+    config = args.config
+    if args.title is not None:
+        args.title = ' '.join(args.title)
+    if config == "min" or config == "max" or config == "avg":
+        plot_learning_curve(args)
+    elif config == "path":
+        plot_path(args)
+
+
+"""
+Report configs:
+Insert Hill Climber:
+ - Shortest: python plotter.py -c min -r 26 30 31 32 33 -l insert-hill-climber -t Shortest_Insert_Hill_Climber
+ - Longest: python plotter.py -c min -r 27 34 35 36 37 -l insert-hill-climber -t Longest_Insert_Hill_Climber
+
+ Swap Hill Climber:
+ - Shortest: python plotter.py -c min -r 38 39 40 41 42 -l swap-hill-climber -t Shortest_Swap_Hill_Climber
+ - Longest: python plotter.py -c min -r 43 44 45 46 47 -l swap-hill-climber -t Longest_Swap_Hill_Climber
+
+Compare hill climbers:
+ - Shortest: python plotter.py -c min -r 38 39 40 41 42 -r 26 30 31 32 33 -l swap-hill-climber insert-hill-climber -t Shortest_TSP_Solver -lg y
+ - Longest: python plotter.py -c min -r 43 44 45 46 47 -r 27 34 35 36 37 -l swap-hill-climber insert-hill-climber -t Longest_TSP_Solver -lg y
+
+ Random Search: 
+ - Shortest: python plotter.py -c min -r 25 56 57 58 59 -l random-search -t Shortest_Random_Search
+ - Longest: python plotter.py -c min -r 24 52 53 54 55 -l random-search -t Longest_Random_Search
+
+Multiple Inheritance Insert List
+- Shortest: python plotter.py -c min -r 51 -l insert-multilist-shortest
+ Summary:
+  - Shortest: python plotter.py -c min -r 38 39 40 41 42 -r 26 30 31 32 33 -r 25 56 57 58 59 -l swap-hill-climber insert-hill-climber random-search -t TSP_Solver_Comparison -lg y
+
+Plot Path:
+python plotter.py -c path -r <run-number>
+"""

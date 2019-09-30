@@ -13,7 +13,8 @@ namespace EvolutionaryTravellingSalesman
             Selector,
             Reproducer,
             Genotype,
-            Mutator
+            Mutator,
+            CrossOver
         };
         public enum Float
         {
@@ -45,6 +46,7 @@ namespace EvolutionaryTravellingSalesman
             m_strings.Add(String.Selector, "TruncateSelector");
             m_strings.Add(String.Reproducer, "Asexual");
             m_strings.Add(String.Mutator, "SingleSwap");
+            m_strings.Add(String.CrossOver, "Selection");
             m_strings.Add(String.Genotype, "List");
 
             m_bools.Add(Bool.Optimize, true);

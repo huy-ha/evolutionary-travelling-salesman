@@ -2,6 +2,7 @@ InputFilePath:inputs/tsp.txt
 Solver:ElitesAnnealingTSPSolver
 Reproducer:MultipleInheritance
 Mutator:Insert
+CrossOver:Selection
 Genotype:List
 GenerationCount:100000
 PathSaveFrequency: 1000

@@ -1,7 +1,7 @@
 InputFilePath:inputs/tsp.txt
 Solver:ElitesAnnealingTSPSolver
 GenerationCount:500000
-LogFrequency: 5000
+PathSaveFrequency: 5000
 PopulationCount:100
 ElitistPercentage:0.02
 Temperature:0.3

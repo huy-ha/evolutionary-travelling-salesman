@@ -10,7 +10,7 @@ Genotype:List
 Optimize:True
 
 GenerationCount:100000
-PopulationCount:1
+PopulationCount:40
 PathSaveFrequency:1000
 OutputSaveFrequency:1000
 

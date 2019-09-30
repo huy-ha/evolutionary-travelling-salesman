@@ -28,25 +28,24 @@ Grace Hours left: 96 hours
 2.  [Results Summary table](<#Summary Results Table>)
 3.  [Dot plot for a population of Asexual Insert Hill Climbers](<#Dot Plot for a Population of Hill Climbers>)
 4.  [Convergence plot for any one of some methods (not all)](<#Shortest Path (left) and Longest Path (right) Learning Curve of Hill Climbers>)
-5.  `Theoretical shortest path using Christofides' algorithm`
+5.  [Theoretical shortest path using Christofides' algorithm](<# Christofides>)
 6.  [Movie of optimizing path (one frame every time path improves)](<#Video Animation of Insert Hill Climber Solving for Shortest Path>)
-7.  `Shortest path Overall performance (based on distance, evaluations)`
-8.  `Longest path Overall performance (based on distance, evaluations)`
+7.  [Shortest and Longest Path Overall performance](<## 2.2 Shortest and Longest Overall Results>)
 
 ## Methods
 
 1. [Description of Representation Used](#Representations)
 2. [Description of Random Search](<#Random Search>)
 3. [Description of Hill Climber](<#Hill Climber>)
-4. Description of [EA variation](<#Representations and their corresponding Crossover and Mutation Operators>) and [selection methods](#Selector) used
+4. Description of EA [Variation](<#Representations and their corresponding Crossover and Mutation Operators>) and [Selection](#Selector) methods used
 5. [Analysis of Performance](<# 4. Analysis of Performance>)
-6. `Two methods compared (bar chart)`
 
 ## Performance Curves
 
 1. [Learning Curve of Random Search(Shortest and Longest)](<#Shortest Path (left) and Longest Path (right) Learning Curve of Random Search>)
 2. [Learning Curve of Hill Climber (Shortest and Longest)](<# Shortest Path (left) and Longest Path (right) Learning Curve of Hill Climbers>)
 3. `Learning Curve of EA`
+4. `Learning Curves of all algorithms tried`
 
 # 2. Results
 
@@ -61,24 +60,33 @@ Below is my results summary table, and explanation of what each column means (wh
 - The sixth column (Genotype) tells which genotype was used for the run
 - The seventh column (Optimize) tells whether the run was optimized for shortest or longest path
 
+The first few rows are the required runs for the assignment, for longest and shortest path by Random Search, Hill Climber, and by my own Evolutionary Algorithm.
+
 | Run # | Reproduction  | Mutation    | Annealing      | Population | Genotype | Optimize | Path Length |
 | ----: | :------------ | :---------- | :------------- | ---------: | -------: | -------: | :---------- |
-|    18 | Asexual       | Single Swap | No             |        100 |     List | Shortest | 74.63085    |
-|    19 | Asexual       | Single Swap | No             |        100 |     List |  Longest | 760.8126    |
-|    20 | Asexual       | Single Swap | Yes (init 0.5) |        100 |     List | Shortest | 74.58129    |
-|    21 | Asexual       | Insert      | Yes (init 0.5) |         50 |     List | Shortest | 47.86598    |
-|    22 | Asexual       | Insert      | Yes (init 0.5) |        100 |     List | Shortest | 41.14663    |
-|    23 | Asexual       | Insert      | Yes (init 0.5) |        200 |     List | Shortest | 36.29556    |
 |    24 | Random Search |             |                |        100 |     List |  Longest | 555.0189    |
 |    25 | Random Search |             |                |        100 |     List | Shortest | 483.8219    |
 |    26 | Hill Climber  | Insert      |                |          1 |     List | Shortest | 30.68847    |
 |    27 | Hill Climber  | Insert      |                |          1 |     List |  Longest | 762.99493   |
 |    28 | Hill Climber  | Single Swap |                |          1 |     List | Shortest | 78.05326    |
 |    29 | Hill Climber  | Single Swap |                |          1 |     List |  Longest | 760.7559    |
+|    18 | Asexual       | Single Swap | No             |        100 |     List | Shortest | 74.63085    |
+|    19 | Asexual       | Single Swap | No             |        100 |     List |  Longest | 760.8126    |
+|    20 | Asexual       | Single Swap | Yes (init 0.5) |        100 |     List | Shortest | 74.58129    |
+|    21 | Asexual       | Insert      | Yes (init 0.5) |         50 |     List | Shortest | 47.86598    |
+|    22 | Asexual       | Insert      | Yes (init 0.5) |        100 |     List | Shortest | 41.14663    |
+|    23 | Asexual       | Insert      | Yes (init 0.5) |        200 |     List | Shortest | 36.29556    |
 
-As can be seen from the table above, my most sucessful implementation was run #TODO named TODO. The plot of the paths can be seen below.
+## 2.2 Shortest and Longest Overall Results
 
-## 2.2 Brief Analysis of Results Summary Table
+The Shortest Overall Path and Longest Overall Path found was by the `Insert Hill Climber`, with distance of `30.68847` and `762.99493`, respectively. Their path plot can be seen below (Shortest on the left, longest on the right)
+
+<div style="clear:both;">
+<img src="output\assets\insert-hc-path-shortest.png" alt="Shortest Path by Insert Hill Climber"
+	title="Shortest Path by Insert Hill Climber" width="45%" height="auto" />
+<img src="output\assets\insert-hc-path-longest.png" alt="Longest Path by Insert Hill Climber"
+	title="Longest Path by Insert Hill Climber" width="45%" height="auto" />
+</div>
 
 # 3. Methods
 
@@ -141,10 +149,11 @@ In my assignment I tried two different genotype representations, with their corr
     - `PriorityMutator`: does the same thing the `PrioritySingleMutator` does but to a variable number of cities, depending on the mutation factor.
 
 2.  `ListGenotype`: the genotype is just an ordered list of the cities, and the path is exactly the genotype.
+
+    - `SelectionCrossover`: Given two parents with list genotypes, a chunk from one parent is picked, and placed in the corresponding location in the offspring's genotype. Then the elements present in both the chunk and the other parent is removed from the second path's path. The remain cities on the second parent's path is filled into the empty slots on the offspring's path.
     - `SingleSwapMutator`: This mutator operator performs a single swap between two random cities.
     - `MultiSwapMutator`: same as `SingleSwapMutator`, but performs a variable number of swaps based on the mutation factor.
     - `InsertMutator`: chooses a random sequence of cities, removes the sequence from the path, then inserts it somewhere else in the path.
-    - `Crossover`: TODO
 
 ### 3.3.2 Selector
 
@@ -172,6 +181,19 @@ On the same note, I expected a larger population to maintain more diversity, the
 
 These two points, I'm not able to explain why this is the case.
 
+## Christofides
+
+According to a Piazza post answer by the professor, he said we could use a package to calculate the distance using Christofides. I cloned guillaumeportails' fork of sth144's implementation of Christofides, and made some changes so that the final distance calculation is accurate for floating point numbers. The output path length from this implementation of Christofides was `32.1098`. To my surprise, my Insert Hill Climber outperformed this Christofides implementation! Of course, since I did not implement this program myself and did not spend time looking through the code, I don't know of its correctness, but the result is encouraging none the less. Below are the path plots for my `Insert Hill Climber` (left) and for `Christofides` (right).
+
+<div style="clear:both;">
+<img src="output\assets\insert-hc-path-shortest.png" alt="Shortest Path by Insert Hill Climber"
+	title="Shortest Path by Insert Hill Climber" width="45%" height="auto" />
+<img src="output\assets\christofides-path.png" alt="Longest Path by Insert Hill Climber"
+	title="Longest Path by Insert Hill Climber" width="45%" height="auto" />
+</div>
+
 # 5. Appendix
+
+## 5.1 Source Code
 
 As per the TA's approval on Piazza, the source code for this project has been zipped up with this README document.

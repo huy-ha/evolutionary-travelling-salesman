@@ -148,13 +148,13 @@ namespace EvolutionaryTravellingSalesman
 
         public void SaveStats()
         {
-            System.IO.File.WriteAllText("output/Config.txt", config.ToString());
-            System.IO.File.WriteAllText("output/BestSalesMan.txt", m_outputStrings[Data.BestSalesMan]);
-            System.IO.File.WriteAllText("output/WorstSalesMan.txt", m_outputStrings[Data.WorstSalesMan]);
-            System.IO.File.WriteAllText("output/MaxCosts.txt", string.Join("\n", m_floatData[Data.MaxCost]));
-            System.IO.File.WriteAllText("output/MinCosts.txt", string.Join("\n", m_floatData[Data.MinCost]));
-            System.IO.File.WriteAllText("output/AvgCosts.txt", string.Join("\n", m_floatData[Data.AverageCost]));
-            System.IO.File.WriteAllText("output/Evaluations.txt", string.Join("\n", m_intData[Data.Evaluations]));
+            System.IO.File.WriteAllText(Program.outputFolder + "/Config.txt", config.ToString());
+            System.IO.File.WriteAllText(Program.outputFolder + "/BestSalesMan.txt", m_outputStrings[Data.BestSalesMan]);
+            System.IO.File.WriteAllText(Program.outputFolder + "/WorstSalesMan.txt", m_outputStrings[Data.WorstSalesMan]);
+            System.IO.File.WriteAllText(Program.outputFolder + "/MaxCosts.txt", string.Join("\n", m_floatData[Data.MaxCost]));
+            System.IO.File.WriteAllText(Program.outputFolder + "/MinCosts.txt", string.Join("\n", m_floatData[Data.MinCost]));
+            System.IO.File.WriteAllText(Program.outputFolder + "/AvgCosts.txt", string.Join("\n", m_floatData[Data.AverageCost]));
+            System.IO.File.WriteAllText(Program.outputFolder + "/Evaluations.txt", string.Join("\n", m_intData[Data.Evaluations]));
         }
     }
 }

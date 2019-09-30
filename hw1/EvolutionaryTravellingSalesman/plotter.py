@@ -143,7 +143,8 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     config = args.config
-    args.title = ' '.join(args.title)
+    if args.title is not None:
+        args.title = ' '.join(args.title)
     if config == "min" or config == "max" or config == "avg":
         plot_learning_curve(args)
     elif config == "path":

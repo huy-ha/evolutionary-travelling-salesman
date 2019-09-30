@@ -1,25 +1,33 @@
 # Travelling Salesman Problem using Genetic Algorithms
 
-## Evolutionary Computation and Automated Design (MECS E4510) with professor Hod Lipson
-
 Name: Huy Ha
 
 UNI: hqh2101
 
+Course Name: Evolutionary Computation and Automated Design
+
+Course Number: MECS E4510
+
+Instructor: professor Hod Lipson
+
 Date Submitted: September 29th 2019
 
-No Grace Hour Used (96 hours left)
+Grace Hours used: 0 hours
+
+Grace Hours left: 96 hours
+
+<div style="page-break-after: always;"></div>
 
 ---
 
-# Grading Helper:
+# 1. Grading Helper:
 
 ## General
 
 1.  [Cover page](<#Travelling Salesman Problem using Genetic Algorithms>)
-2.  [Summary result table showing all information requested](<#Summary Results Table>)
+2.  [Results Summary table](<#Summary Results Table>)
 3.  `Dot plot for any one of the methods (not all required)`
-4.  `Convergence plot for any one of some methods (not all)`
+4.  [Convergence plot for any one of some methods (not all)](<#Shortest Path (left) and Longest Path (right) Learning Curve of Hill Climbers>)
 5.  `Code included (8pt courier single spacing)`
 6.  `Theoretical shortest path using Christofides' algorithm`
 7.  `Movie of optimizing path (one frame every time path improves)`
@@ -31,7 +39,7 @@ No Grace Hour Used (96 hours left)
 
 1. [Description of Representation Used](#Representations)
 2. [Description of Random Search](<#Random Search>)
-3. `Description of Hill Climber`
+3. [Description of Hill Climber](<#Hill Climber>)
 4. `Description of EA variation and selection methods used`
 5. `Analysis of Performance (What worked and what didn't)`
 6. `Two methods compared (bar chart)`
@@ -45,30 +53,41 @@ No Grace Hour Used (96 hours left)
 5. `Longest Path Learning Curve of hill climber`
 6. `Longest Path Learning Curve of EA and some variation of EA`
 
-## Results
+# 2. Results
 
-#### Summary Results Table
+## 2.1 Summary Results Table
 
-| Run # | Reproduction  | Mutation    | Annealing      | Population | Genotype | Optimize | Longest Path |
-| ----: | :------------ | :---------- | :------------- | ---------: | -------: | -------: | :----------- |
-|    18 | Asexual       | Single Swap | No             |        100 |     List | Shortest | 74.63085     |
-|    19 | Asexual       | Single Swap | No             |        100 |     List |  Longest | 760.8126     |
-|    20 | Asexual       | Single Swap | Yes (init 0.5) |        100 |     List | Shortest | 74.58129     |
-|    21 | Asexual       | Insert      | Yes (init 0.5) |         50 |     List | Shortest | 47.86598     |
-|    22 | Asexual       | Insert      | Yes (init 0.5) |        100 |     List | Shortest | 41.14663     |
-|    23 | Asexual       | Insert      | Yes (init 0.5) |        200 |     List | Shortest | 36.29556     |
-|    24 | Random Search |             |                |        100 |     List |  Longest | 555.0189     |
-|    25 | Random Search |             |                |        100 |     List | Shortest | 483.8219     |
-|    26 | Hill Climber  | Insert      |                |          1 |     List | Shortest | 30.68847     |
-|    27 | Hill Climber  | Insert      |                |          1 |     List |  Longest | 762.99493    |
-|    28 | Hill Climber  | Single Swap |                |          1 |     List | Shortest | 78.05326     |
-|    29 | Hill Climber  | Single Swap |                |          1 |     List |  Longest | 760.7559     |
+Below is my results summary table, and explanation of what each column means (where it might not be clear)
+
+- The second column (Reproduction) tells which reproducer I used, or the name of the configuration (Hill climber, random search,...).
+- The third column (Mutation) outlines which of the mutator operator (if any) I used in the run
+- The fourth column (Annealing) states whether or not I used simulated annealing, and if so, what was the initial temperature
+- The fifth column (Population) gives the number of individuals in my population for the run
+- The sixth column (Genotype) tells which genotype was used for the run
+- The seventh column (Optimize) tells whether the run was optimized for shortest or longest path
+
+| Run # | Reproduction  | Mutation    | Annealing      | Population | Genotype | Optimize | Path Length |
+| ----: | :------------ | :---------- | :------------- | ---------: | -------: | -------: | :---------- |
+|    18 | Asexual       | Single Swap | No             |        100 |     List | Shortest | 74.63085    |
+|    19 | Asexual       | Single Swap | No             |        100 |     List |  Longest | 760.8126    |
+|    20 | Asexual       | Single Swap | Yes (init 0.5) |        100 |     List | Shortest | 74.58129    |
+|    21 | Asexual       | Insert      | Yes (init 0.5) |         50 |     List | Shortest | 47.86598    |
+|    22 | Asexual       | Insert      | Yes (init 0.5) |        100 |     List | Shortest | 41.14663    |
+|    23 | Asexual       | Insert      | Yes (init 0.5) |        200 |     List | Shortest | 36.29556    |
+|    24 | Random Search |             |                |        100 |     List |  Longest | 555.0189    |
+|    25 | Random Search |             |                |        100 |     List | Shortest | 483.8219    |
+|    26 | Hill Climber  | Insert      |                |          1 |     List | Shortest | 30.68847    |
+|    27 | Hill Climber  | Insert      |                |          1 |     List |  Longest | 762.99493   |
+|    28 | Hill Climber  | Single Swap |                |          1 |     List | Shortest | 78.05326    |
+|    29 | Hill Climber  | Single Swap |                |          1 |     List |  Longest | 760.7559    |
 
 As can be seen from the table above, my most sucessful implementation was run #TODO named TODO. The plot of the paths can be seen below.
 
-## Methods
+## 2.2 Brief Analysis of Results Summary Table
 
-### Random Search
+# 3. Methods
+
+## 3.1 Random Search
 
 In `RandomSearchTSPSolver.cs`, I've implemented a random search travelling saleman problem solver that uniformly samples the solution space, and keeps track of the best solution it has found so far. In other words, I'm creating a random path for every single individual in the population in every single generation, evaluting the fitness, then, if the individual has the highest fitness in the population, I allow the individual to survive to the next generation (the `elite`).
 
@@ -81,29 +100,20 @@ In `RandomSearchTSPSolver.cs`, I've implemented a random search travelling salem
 	title="Longest Path Learning Curve of Random Search" width="45%" height="auto" />
 </div>
 
-### Hill Climber
+## 3.2 Hill Climber
 
-A Hill climber is just a genetic algorithm with population 1, simulated annealing with initial temperature set to 0, with a 100% reproduction rate (the individual in the previous "generation" is always the starting point for creating the new individual in the next population), with an asexual reproduction operator (no crossing over). Since my implementation of the GA was general enough, I was able to just define a configuration of the GA as a hill climber, with the configurations as described above. The only degree of freedom left was the mutation operator, which I experimented with the insert mutator and swap mutator (described more detailedly below in my EA section).
+A Hill climber is just a genetic algorithm with population 1, simulated annealing with initial temperature set to 0, with a 100% reproduction rate (the individual in the previous "generation" is always the starting point for creating the new individual in the next population), with an asexual reproduction operator (no crossing over). Since my implementation of the GA was generic enough, I was able to just define a configuration of the GA as a hill climber, with the configurations as described above. The only degree of freedom left was the mutation operator, which I experimented with the insert mutator and swap mutator (described more detailedly below in my EA section). The learning curves for hill climbers with both types of mutator operators can be seen below.
 
-`TODO insert hill climber plots`
-
-#### Shortest Path (left) and Longest Path (right) Learning Curve of Insert Hill Climber
+#### Shortest Path (left) and Longest Path (right) Learning Curve of Hill Climbers
 
 <div style="clear:both;">
-<img src="output\run25-random-shortest\Cost.png" alt="Shortest Path Learning Curve of Random Search"
-	title="Shortest Path Learning Curve of Random Search" width="45%" height="auto" />
-<img src="output\run24-random-longest\Cost.png" alt="Longest Path Learning Curve of Random Search"
-	title="Longest Path Learning Curve of Random Search" width="45%" height="auto" />
+<img src="output\assets\longest-hc.png" alt="Shortest Path Learning Curve of Hill Climbers"
+	title="Shortest Path Learning Curve of Hill Climbers" width="45%" height="auto" />
+<img src="output\assets\shortest-hc.png" alt="Shortest Path Learning Curve of Hill Climbers"
+	title="Longest Path Learning Curve of Hill Climbers" width="45%" height="auto" />
 </div>
 
-#### Shortest Path (left) and Longest Path (right) Learning Curve of Swap Hill Climber
-
-<div style="clear:both;">
-<img src="output\run25-random-shortest\Cost.png" alt="Shortest Path Learning Curve of Random Search"
-	title="Shortest Path Learning Curve of Random Search" width="45%" height="auto" />
-<img src="output\run24-random-longest\Cost.png" alt="Longest Path Learning Curve of Random Search"
-	title="Longest Path Learning Curve of Random Search" width="45%" height="auto" />
-</div>
+## 3.3 Evolutionary Algorithm
 
 ### Representations and their corresponding Crossover and Mutation Operators
 
@@ -121,6 +131,4 @@ In my assignment I tried two different genotype representations, with their corr
     - `InsertMutator`: chooses a random sequence of cities, removes the sequence from the path, then inserts it somewhere else in the path.
     - `Crossover`: TODO
 
-## Performance Plots
-
-## Appendix
+# 4. Appendix

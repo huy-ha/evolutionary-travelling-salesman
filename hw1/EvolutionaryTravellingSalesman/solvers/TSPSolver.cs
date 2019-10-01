@@ -30,7 +30,16 @@ namespace EvolutionaryTravellingSalesman
         protected Config config;
         protected LinkedList<TravellingSalesman> population;
         int currentGeneration = -1;
-        public enum Data { MinCost, AverageCost, MaxCost, Evaluations, BestSalesMan, WorstSalesMan };
+        public enum Data
+        {
+            MinCost,
+            AverageCost,
+            MaxCost,
+            Evaluations,
+            BestSalesMan,
+            WorstSalesMan,
+            PopulationSnapshot
+        };
         private Dictionary<Data, List<float>> m_floatData = new Dictionary<Data, List<float>>();
         private Dictionary<Data, List<int>> m_intData = new Dictionary<Data, List<int>>();
         private Dictionary<Data, string> m_outputStrings = new Dictionary<Data, string>();
@@ -60,6 +69,7 @@ namespace EvolutionaryTravellingSalesman
             m_intData.Add(Data.Evaluations, new List<int>());
             m_outputStrings.Add(Data.BestSalesMan, "");
             m_outputStrings.Add(Data.WorstSalesMan, "");
+            m_outputStrings.Add(Data.PopulationSnapshot, "");
         }
 
         protected void Reset()
@@ -96,7 +106,7 @@ namespace EvolutionaryTravellingSalesman
             int saveOutputFrequency = config.Get(Config.Int.OutputSaveFrequency);
             for (currentGeneration = 0; currentGeneration < generationCount; currentGeneration++)
             {
-
+                m_outputStrings[Data.BestSalesMan] += string.Join(" | ", population);
                 await Evolve();
                 RecordStats();
                 if (currentGeneration % saveOutputFrequency == 0) SaveStats();
@@ -133,17 +143,21 @@ namespace EvolutionaryTravellingSalesman
                 lastBestSalesmanGeneration = currentGeneration;
                 lastBestSalesmanFitness = bestSalesMan.Fitness();
                 lastBestSalesmanCost = bestSalesMan.Cost;
-                Console.WriteLine("Best Cost: {0} | Generation: {1} | {2}", lastBestSalesmanCost, lastBestSalesmanGeneration, System.DateTime.Now);
-                OnLog?.Invoke();
-            }
-            if (currentGeneration == config.Get(Config.Int.GenerationCount) - 1 ||
-            currentGeneration % config.Get(Config.Int.PathSaveFrequency) == 0)
-            {
                 m_outputStrings[Data.BestSalesMan] += "Generation " + currentGeneration + "\n";
                 m_outputStrings[Data.BestSalesMan] += bestSalesMan.PrintPath() + "\n";
                 m_outputStrings[Data.WorstSalesMan] += "Generation " + currentGeneration + "\n";
                 m_outputStrings[Data.WorstSalesMan] += worstSalesMan.PrintPath() + "\n";
+                Console.WriteLine("Best Cost: {0} | Generation: {1} | {2}", lastBestSalesmanCost, lastBestSalesmanGeneration, System.DateTime.Now);
+                OnLog?.Invoke();
             }
+            // if (currentGeneration == config.Get(Config.Int.GenerationCount) - 1 ||
+            // currentGeneration % config.Get(Config.Int.PathSaveFrequency) == 0)
+            // {
+            //     m_outputStrings[Data.BestSalesMan] += "Generation " + currentGeneration + "\n";
+            //     m_outputStrings[Data.BestSalesMan] += bestSalesMan.PrintPath() + "\n";
+            //     m_outputStrings[Data.WorstSalesMan] += "Generation " + currentGeneration + "\n";
+            //     m_outputStrings[Data.WorstSalesMan] += worstSalesMan.PrintPath() + "\n";
+            // }
         }
 
         public void SaveStats()

@@ -1,28 +1,31 @@
 # Travelling Salesman Problem using Genetic Algorithms
 
+<div style="text-align: center;">
 Name: Huy Ha
-
+<br>
 UNI: hqh2101
-
+<br>
+<br>
 Course Name: Evolutionary Computation and Automated Design
-
+<br>
 Course Number: MECS E4510
-
+<br>
 Instructor: professor Hod Lipson
-
-Date Submitted: September 29th 2019
-
-Grace Hours used: 0 hours
-
-Grace Hours left: 96 hours
-
+<br>
+<br>
+Date Submitted: September 30th 2019
+<br>
+Grace Hours used: 9 hours
+<br>
+Grace Hours left: 87 hours
+</div>
 <div style="page-break-after: always;"></div>
 
 ---
 
 # 1. Grading Helper:
 
-## General
+## 1.1 General
 
 1.  [Cover page](<#Travelling Salesman Problem using Genetic Algorithms>)
 2.  [Results Summary table](<#Summary Results Table>)
@@ -32,7 +35,7 @@ Grace Hours left: 96 hours
 6.  [Movie of optimizing path (one frame every time path improves)](<#Video Animation of Insert Hill Climber Solving for Shortest Path>)
 7.  [Shortest and Longest Path Overall performance](<## 2.2 Shortest and Longest Overall Results>)
 
-## Methods
+## 1.2 Methods
 
 1. [Description of Representation Used](#Representations)
 2. [Description of Random Search](<#Random Search>)
@@ -40,12 +43,12 @@ Grace Hours left: 96 hours
 4. Description of EA [Variation](<#Representations and their corresponding Crossover and Mutation Operators>) and [Selection](#Selector) methods used
 5. [Analysis of Performance](<# 4. Analysis of Performance>)
 
-## Performance Curves
+## 1.3 Performance Curves
 
 1. [Learning Curve of Random Search(Shortest and Longest)](<#Shortest Path (left) and Longest Path (right) Learning Curve of Random Search>)
 2. [Learning Curve of Hill Climber (Shortest and Longest)](<# Shortest Path (left) and Longest Path (right) Learning Curve of Hill Climbers>)
-3. `Learning Curve of EA`
-4. `Learning Curves of all algorithms tried`
+3. [Learning Curve of EA](<# 3.3.3 Shortest Path (left) and Longest Path (right) Learning Curve of Evolutionary Algorithm>)
+4. [Learning Curves of all Algorithms tried](<## 2.3 Learning Curve for all methods>)
 
 # 2. Results
 
@@ -86,6 +89,22 @@ The Shortest Overall Path and Longest Overall Path found was by the `Insert Hill
 	title="Shortest Path by Insert Hill Climber" width="45%" height="auto" />
 <img src="output\assets\insert-hc-path-longest.png" alt="Longest Path by Insert Hill Climber"
 	title="Longest Path by Insert Hill Climber" width="45%" height="auto" />
+</div>
+
+## 2.3 Learning Curve for all methods
+
+Below is a graph of the learning curve for all methods. Note that there are error bars in the largest plot, but it only very small, so I have exported other plots of the same graph but zoomed it, and placed the 3 zoomed in versions below the main graph.
+
+<img src="output\assets\summary.png" alt="Zoomed In View of Learning Curve Summary"
+	title="Zoomed In View of Learning Curve Summary" width="100%" height="auto" />
+
+<div style="clear:both;">
+	<img src="output\assets\summary-zoomed-1.png" alt="Zoomed In View of Learning Curve Summary"
+	title="Zoomed In View of Learning Curve Summary" width="30%" height="auto" />
+	<img src="output\assets\summary-zoomed-2.png" alt="Zoomed In View of Learning Curve Summary"
+	title="Zoomed In View of Learning Curve Summary" width="30%" height="auto" />
+	<img src="output\assets\summary-zoomed-3.png" alt="Zoomed In View of Learning Curve Summary"
+	title="Zoomed In View of Learning Curve Summary" width="30%" height="auto" />
 </div>
 
 # 3. Methods
@@ -158,6 +177,39 @@ In my assignment I tried two different genotype representations, with their corr
 ### 3.3.2 Selector
 
 Earlier on in the development process, I experimented with Stochastic Universal Sampling, as described in the recommended textbook for the class "An Introduction to Genetic Algorithms", but it did not work as well, and I didn't see it as the limiting factor of my program. Therefore, I removed that part of the code, and just replaced it with a simple truncate selector, which selects the top X%, where X is a hyperparameter I called ReproductionFactor.
+
+### 3.3.3 Shortest Path (left) and Longest Path (right) Learning Curve of Evolutionary Algorithm
+
+Below are the learning curve plots for my Evolutionary Algorithms, with the following parameters:
+
+```
+Selector:TruncateSelector
+Reproducer:MultipleInheritance
+Mutator:Insert
+CrossOver:Selection
+Genotype:List
+PopulationCount:100
+ElitistPercentage:0.02
+InitMutationFactor:0.05
+MutationFactorDecay:1
+Temperature:0.5
+TemperatureDecay:0.9999
+ReproductionPercentage:0.5
+```
+
+<div style="clear:both;">
+<img src="output\assets\ea-shortest.png" alt="Shortest Path Learning Curve of EA"
+	title="Shortest Path Learning Curve of EA" width="49%" height="auto" />
+<img src="output\assets\ea-longest.png" alt="Longest Path Learning Curve of EA"
+	title="Longest Path Learning Curve of EA" width="49%" height="auto" />
+</div>
+Again, because the error bars were too small, I have zoomed into the graph so it is visible.
+<div style="clear:both;">
+<img src="output\assets\ea-shortest-zoomed.png" alt="Shortest Path Learning Curve of EA"
+	title="Shortest Path Learning Curve of EA" width="49%" height="auto" />
+<img src="output\assets\ea-longest-zoomed.png" alt="Longest Path Learning Curve of EA"
+	title="Longest Path Learning Curve of EA" width="49%" height="auto" />
+</div>
 
 # 4. Analysis of Performance
 
